@@ -25,19 +25,23 @@ namespace ModbusSurvey
             {
                 foreach (var node in server.Nodes)
                 {
+                    //Создаем порт и открываем его, если он еще не создан
+                    if (node.serialPort == null || node.serialPort.IsOpen == false)
+                    {
+                        node.CreateSerialPort();
+                        node.serialPort.Open(); 
+                    }
                     foreach (var device in node.Devices)
                     {
-                        Console.ForegroundColor = ConsoleColor.DarkYellow;
-                        Console.WriteLine(device.ToString());
-                        Console.ResetColor();
+                        if (device.Master == null) 
+                        {
+                            device.CreateModbusMaster(node); 
+                        }
                         foreach (var tag in device.Tags)
                         {
-                            SurveyModbus(tag,device);
+                            SurveyModbus(tag, device);
                             OutputOnScreen(tag);
                         }
-                        Console.WriteLine("----------------------------------------");
-                        Thread.Sleep(device.periodSurvey);
-                        Console.Clear();
                     }
                 }
             }
@@ -48,13 +52,13 @@ namespace ModbusSurvey
 
         }
 
-        public object QueryModbus(Tag tag,Device device)
+        public object QueryModbus(Tag tag, Device device)
         {
             switch (tag.functionModbus)
             {
                 case FunctionModbus.COILS:
-                    bool[] tempBool = device.deviceMaster.ReadCoils(
-                       device.deviceAddress,
+                    bool[] tempBool = device.Master.ReadCoils(
+                       device.Address,
                        tag.startAddress,
                        tag.numberOfPoints);
                     return tempBool;
@@ -67,8 +71,8 @@ namespace ModbusSurvey
                     Console.ReadKey();
                     return null;
                 case FunctionModbus.HOLDING_REGISTERS:
-                    ushort[] tempUshort = device.deviceMaster.ReadHoldingRegisters(
-                        device.deviceAddress,
+                    ushort[] tempUshort = device.Master.ReadHoldingRegisters(
+                        device.Address,
                         tag.startAddress,
                         tag.numberOfPoints);
                     return tempUshort;
@@ -82,9 +86,9 @@ namespace ModbusSurvey
             return null;
         }
 
-        public void SurveyModbus(Tag tag,Device device)
+        public void SurveyModbus(Tag tag, Device device)
         {
-            ushort[] data = (ushort[])QueryModbus(tag,device);
+            ushort[] data = (ushort[])QueryModbus(tag, device);
 
             #region Перестановка байт(слов)
             switch (tag.shuffleBytes)

@@ -25,11 +25,11 @@ namespace ModbusSurvey
         /// <summary>
         /// Ведущее(мастер) устройство
         /// </summary>
-        public ModbusSerialMaster deviceMaster { get; set; }
+        public ModbusSerialMaster Master { get; set; }
         /// <summary>
         /// Тип протокола
         /// </summary>
-        private DeviceType deviceType { get; set; }
+        private DeviceType Type { get; set; }
         /// <summary>
         /// Тип обмена данными
         /// </summary>
@@ -37,7 +37,7 @@ namespace ModbusSurvey
         /// <summary>
         /// Адрес устройства
         /// </summary>
-        public byte deviceAddress { get; set; }
+        public byte Address { get; set; }
         /// <summary>
         /// Допустимое время ответа устройства
         /// </summary>
@@ -65,10 +65,10 @@ namespace ModbusSurvey
         {
             Tags = new List<Tag>();
             //Настройки по умолчанию
-            deviceType = DeviceType.MODBUS;
+            Type = DeviceType.MODBUS;
             exchangeType = ExchangeType.RTU;
             Name = "Device";
-            deviceAddress = 1;
+            Address = 1;
             timeResponse = TimeSpan.FromMilliseconds(1000);
             repeatAfterError = 3;
             timeRepeatAfterError = TimeSpan.FromMilliseconds(10000);
@@ -79,13 +79,13 @@ namespace ModbusSurvey
         public void CreateModbusMaster(NodeCOM node)
         {
             if (exchangeType == ExchangeType.RTU)
-                deviceMaster = ModbusSerialMaster.CreateRtu(node.serialPort);
+                Master = ModbusSerialMaster.CreateRtu(node.serialPort);
             else if (exchangeType == ExchangeType.ASCII)
-                deviceMaster = ModbusSerialMaster.CreateAscii(node.serialPort);
+                Master = ModbusSerialMaster.CreateAscii(node.serialPort);
         }
         public void CreateModbusMaster(NodeTCP node)
         {
-            deviceMaster = ModbusSerialMaster.CreateRtu(node._tcpClient);
+            Master = ModbusSerialMaster.CreateRtu(node._tcpClient);
         }
     }
     /// <summary>
