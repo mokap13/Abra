@@ -17,7 +17,7 @@ namespace ModbusSurvey
         {
             _server = server;
         }
-        
+
         public void StartSurvey()
         {
 
@@ -32,7 +32,7 @@ namespace ModbusSurvey
                         Console.ResetColor();
                         foreach (var tag in device.Tags)
                         {
-                            SurveyModbus(tag);
+                            SurveyModbus(tag,device);
                             OutputOnScreen(tag);
                         }
                         Console.WriteLine("----------------------------------------");
@@ -48,15 +48,15 @@ namespace ModbusSurvey
 
         }
 
-        public object QueryModbus(Tag tag)
+        public object QueryModbus(Tag tag,Device device)
         {
             switch (tag._functionModbus)
             {
                 case FunctionModbus.COILS:
-                     bool[] tempBool = Device._deviceMaster.ReadCoils(
-                        tag._deviceAddress,
-                        tag._startAddress,
-                        tag._numberOfPoints);
+                    bool[] tempBool = device._deviceMaster.ReadCoils(
+                       device._deviceAddress,
+                       tag._startAddress,
+                       tag._numberOfPoints);
                     return tempBool;
                 case FunctionModbus.DISCRETE_INPUTS:
                     Console.WriteLine("ERROR");
@@ -67,8 +67,8 @@ namespace ModbusSurvey
                     Console.ReadKey();
                     return null;
                 case FunctionModbus.HOLDING_REGISTERS:
-                    ushort[] tempUshort = Device._deviceMaster.ReadHoldingRegisters(
-                        tag._deviceAddress,
+                    ushort[] tempUshort = device._deviceMaster.ReadHoldingRegisters(
+                        device._deviceAddress,
                         tag._startAddress,
                         tag._numberOfPoints);
                     return tempUshort;
@@ -84,14 +84,14 @@ namespace ModbusSurvey
 
         public float[] DataFloat(ushort[] dataUshort)
         {
-            float[] dataFloat = new float[dataUshort.Length/2];
+            float[] dataFloat = new float[dataUshort.Length / 2];
             Buffer.BlockCopy(dataUshort, 0, dataFloat, 0, dataUshort.Length * 2);
             return dataFloat;
         }
 
-        public void SurveyModbus(Tag tag)
+        public void SurveyModbus(Tag tag,Device device)
         {
-            ushort[] data = (ushort[])QueryModbus(tag);
+            ushort[] data = (ushort[])QueryModbus(tag,device);
 
             #region Перестановка байт(слов)
             switch (tag._shuffleBytes)
@@ -103,7 +103,7 @@ namespace ModbusSurvey
                     break;
                 case ShuffleBytes.HIGHER_BYTE_AHEAD:
                     break;
-            } 
+            }
             #endregion
 
             #region Обработка типа данных
@@ -124,42 +124,42 @@ namespace ModbusSurvey
                     break;
                 default:
                     break;
-            } 
+            }
             #endregion
         }
 
         public void OutputOnScreen(Tag tag)
         {
-                switch (tag._dataType)
-                {
-                    case DataType.BOOL:
-                        break;
-                    case DataType.INT:
-                        for (int i = 0; i < tag._valueUshort.Length; i++)
-                        {
-                            if (tag._valueUshort[i] == 0)
-                                continue;
-                            Console.Write(tag._tagName + " --- ");
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.CursorLeft = 32;
-                            Console.WriteLine(tag._valueUshort[i].ToString());
-                            Console.ResetColor();
-                        }
-                        break;
-                    case DataType.FLOAT:
-                        for (int i = 0; i < tag._valueFloat.Length; i++)
-                        {
-                            if (tag._valueFloat[i] == 0)
-                                continue;
-                            Console.Write(tag._tagName + " --- ");
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.CursorLeft = 32;
-                            Console.WriteLine(tag._valueFloat[i].ToString("0.00"));
-                            Console.ResetColor();
-                        }
-                        break;
-                    case DataType.STRING:
-                        break;
+            switch (tag._dataType)
+            {
+                case DataType.BOOL:
+                    break;
+                case DataType.INT:
+                    for (int i = 0; i < tag._valueUshort.Length; i++)
+                    {
+                        if (tag._valueUshort[i] == 0)
+                            continue;
+                        Console.Write(tag._tagName + " --- ");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.CursorLeft = 32;
+                        Console.WriteLine(tag._valueUshort[i].ToString());
+                        Console.ResetColor();
+                    }
+                    break;
+                case DataType.FLOAT:
+                    for (int i = 0; i < tag._valueFloat.Length; i++)
+                    {
+                        if (tag._valueFloat[i] == 0)
+                            continue;
+                        Console.Write(tag._tagName + " --- ");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.CursorLeft = 32;
+                        Console.WriteLine(tag._valueFloat[i].ToString("0.00"));
+                        Console.ResetColor();
+                    }
+                    break;
+                case DataType.STRING:
+                    break;
             }
         }
 
@@ -175,7 +175,7 @@ namespace ModbusSurvey
                     array[i - 1] = temp;
                 }
             }
-            
+
         }
     }
 }

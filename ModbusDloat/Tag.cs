@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ModbusSurvey
 {
-    class Tag:Device
+    class Tag
     {
         /// <summary>
         /// Название тега
@@ -60,7 +60,7 @@ namespace ModbusSurvey
     /// <summary>
     /// Тип функции запроса
     /// </summary>
-    enum FunctionModbus 
+    enum FunctionModbus
     {
         COILS,
         DISCRETE_INPUTS,
@@ -73,7 +73,7 @@ namespace ModbusSurvey
     /// </summary>
     enum DataType
     {
-        BOOL,INT,FLOAT,STRING
+        BOOL, INT, FLOAT, STRING
     }
     /// <summary>
     /// Тип доступа к данным
@@ -87,6 +87,6 @@ namespace ModbusSurvey
     /// </summary>
     enum ShuffleBytes
     {
-        NONE, HIGHER_WORD_AHEAD , HIGHER_BYTE_AHEAD
+        NONE, HIGHER_WORD_AHEAD, HIGHER_BYTE_AHEAD
     }
 }

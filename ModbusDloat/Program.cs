@@ -19,11 +19,14 @@ namespace ModbusSurvey
             Node TestNode = new Node();
             server.Nodes.Add(TestNode);
             TestNode._portName = "COM4";
+            TestNode.CreateSerialPort();
+            TestNode._serialPort.Open();
 
             Device TestDevice = new Device();
             TestNode.Devices.Add(TestDevice);
             TestDevice._periodSurvey = TimeSpan.FromMilliseconds(2000);
             TestDevice._deviceName = "Модуль ввода 1";
+            TestDevice.CreateModbusMaster(TestNode);
 
             Tag TestTag = new Tag();
             TestTag._dataType = DataType.INT;
@@ -33,7 +36,7 @@ namespace ModbusSurvey
             TestTag._tagName = "Температура(ближняя) зал 1";
             TestDevice.Tags.Add(TestTag);
 
-            //#region TestTags
+            #region TestTags
             //Tag TestTag_0 = new Tag();
             //TestTag_0._startAddress = 4;
             //TestTag_0._tagName = "Температура(ближняя) зал 1";
@@ -73,24 +76,25 @@ namespace ModbusSurvey
             //TestTag_7._tagName = "Температура(ближняя) зал 2";
             //TestTag_7._startAddress = 46;
             //TestDevice.Tags.Add(TestTag_7); 
-            //#endregion
+            #endregion
 
-            CreateConnection(TestNode, TestDevice);
+            //CreateConnection(TestNode, TestDevice);
 
             SurveyEngine surveyEngine = new SurveyEngine(server);
-            
+
             while (true)
             {
                 surveyEngine.StartSurvey();
             }
         }
 
-        public static void CreateConnection(Node node,Device device)
+        public static void CreateConnection(Node node, Device device)
         {
-            node.CreateSerialPort();
-            device.CreateModbusMaster();
-            Node._serialPort.Open();
-            Device._deviceMaster = ModbusSerialMaster.CreateRtu(Node._serialPort);
+            //node.CreateSerialPort();
+            //node._serialPort.Open();
+            //device.CreateModbusMaster(node);
+            
+            //device._deviceMaster = ModbusSerialMaster.CreateRtu(node._serialPort);
         }
     }
 }

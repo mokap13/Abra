@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ModbusSurvey
 {
-    class Device:Node
+    class Device
     {
         /// <summary>
         /// Список тегов
@@ -17,11 +17,15 @@ namespace ModbusSurvey
         /// <summary>
         /// Ведущее(мастер) устройство
         /// </summary>
-        public static ModbusSerialMaster _deviceMaster { get; set; }
+        public ModbusSerialMaster _deviceMaster { get; set; }
         /// <summary>
         /// Тип протокола
         /// </summary>
         public DeviceType _deviceType { get; set; }
+        /// <summary>
+        /// Тип обмена данными
+        /// </summary>
+        public ExchangeType _exchangeType { get; set; }
         /// <summary>
         /// Название устройства
         /// </summary>
@@ -33,33 +37,34 @@ namespace ModbusSurvey
         /// <summary>
         /// Адрес устройства
         /// </summary>
-        public  byte _deviceAddress { get; set; }
+        public byte _deviceAddress { get; set; }
         /// <summary>
         /// Допустимое время ответа устройства
         /// </summary>
-        public  TimeSpan _timeResponse { get; set; }
+        public TimeSpan _timeResponse { get; set; }
         /// <summary>
         /// Кол-во игнорирований ошибок
         /// </summary>
-        public  ushort _repeatAfterError { get; set; }
+        public ushort _repeatAfterError { get; set; }
         /// <summary>
         /// Пауза после получения ошибки
         /// </summary>
-        public  TimeSpan _timeRepeatAfterError { get; set; }
+        public TimeSpan _timeRepeatAfterError { get; set; }
         /// <summary>
         /// Период опроса
         /// </summary>
-        public  TimeSpan _periodSurvey { get; set; }
+        public TimeSpan _periodSurvey { get; set; }
         /// <summary>
         /// Задержка послле получения ответа
         /// </summary>
-        public  TimeSpan _delayAfterResponse { get; set; }
+        public TimeSpan _delayAfterResponse { get; set; }
 
         public Device()
         {
             Tags = new List<Tag>();
             //Настройки по умолчанию
             _deviceType = DeviceType.MODBUS;
+            _exchangeType = ExchangeType.RTU;
             _deviceName = "Device";
             _deviceAddress = 1;
             _timeResponse = TimeSpan.FromMilliseconds(1000);
@@ -69,12 +74,12 @@ namespace ModbusSurvey
             _delayAfterResponse = TimeSpan.FromMilliseconds(4);
         }
 
-        public void CreateModbusMaster()
+        public void CreateModbusMaster(Node node)
         {
             if (_exchangeType == ExchangeType.RTU)
-                _deviceMaster = ModbusSerialMaster.CreateRtu(_serialPort);
+                _deviceMaster = ModbusSerialMaster.CreateRtu(node._serialPort);
             else if (_exchangeType == ExchangeType.ASCII)
-                _deviceMaster = ModbusSerialMaster.CreateAscii(_serialPort);
+                _deviceMaster = ModbusSerialMaster.CreateAscii(node._serialPort);
         }
     }
     /// <summary>
@@ -82,6 +87,10 @@ namespace ModbusSurvey
     /// </summary>
     enum DeviceType
     {
-        MODBUS,PROGRAM
+        MODBUS, PROGRAM
+    }
+    enum ExchangeType
+    {
+        ASCII, RTU
     }
 }

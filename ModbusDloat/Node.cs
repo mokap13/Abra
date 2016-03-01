@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ModbusSurvey
 {
-    class Node:Server
+    class Node
     {
         /// <summary>
         /// Список устройств узла
@@ -16,7 +16,7 @@ namespace ModbusSurvey
         /// <summary>
         /// Последовательный порт
         /// </summary>
-        public static SerialPort _serialPort { get; set; }
+        public SerialPort _serialPort { get; set; }
         /// <summary>
         /// Имя узла
         /// </summary>
@@ -28,7 +28,7 @@ namespace ModbusSurvey
         /// <summary>
         /// Комментарий узла
         /// </summary>
-        public static string _nodeComment { get; set; }
+        public string _nodeComment { get; set; }
 
         /// <summary>
         /// Имя порта
@@ -50,11 +50,8 @@ namespace ModbusSurvey
         /// Стоп-биты
         /// </summary>
         public StopBits _stopBits { get; set; }
-        /// <summary>
-        /// Тип обмена данными
-        /// </summary>
-        public ExchangeType _exchangeType { get; set; }
-        
+       
+
         /// <summary>
         /// IP адрес 
         /// </summary>
@@ -80,8 +77,7 @@ namespace ModbusSurvey
             _parity = Parity.None;
             _dataBits = 8;
             _stopBits = StopBits.One;
-            _exchangeType = ExchangeType.RTU;
-        
+
             //Харакатиристики TCP/IP
             _ipAddress = "127.0.0.0";
             _ipPort = 502;
@@ -99,7 +95,6 @@ namespace ModbusSurvey
             _parity = Parity.None;
             _dataBits = 8;
             _stopBits = StopBits.One;
-            _exchangeType = ExchangeType.RTU;
 
             //Харакатиристики TCP/IP
             _ipAddress = "127.0.0.0";
@@ -107,7 +102,7 @@ namespace ModbusSurvey
         }
         public void CreateSerialPort()
         {
-            _serialPort = new SerialPort(_portName, _baudRate, _parity, _dataBits, _stopBits);
+            this._serialPort = new SerialPort(_portName, _baudRate, _parity, _dataBits, _stopBits);
         }
     }
     /// <summary>
@@ -115,13 +110,10 @@ namespace ModbusSurvey
     /// </summary>
     enum NodeType
     {
-        COM,TCP
+        COM, TCP
     }
     /// <summary>
     /// Тип обмена данными
     /// </summary>
-    enum ExchangeType
-    {
-        ASCII,RTU
-    }
+    
 }
