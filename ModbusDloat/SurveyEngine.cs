@@ -11,11 +11,11 @@ namespace ModbusSurvey
 {
     class SurveyEngine
     {
-        Server _server;
+        Server server;
 
-        public SurveyEngine(Server server)
+        public SurveyEngine(Server _server)
         {
-            _server = server;
+            server = _server;
         }
 
         public void StartSurvey()
@@ -23,12 +23,12 @@ namespace ModbusSurvey
 
             while (true)
             {
-                foreach (var node in _server.Nodes)
+                foreach (var node in server.Nodes)
                 {
                     foreach (var device in node.Devices)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkYellow;
-                        Console.WriteLine(device._deviceName);
+                        Console.WriteLine(device.ToString());
                         Console.ResetColor();
                         foreach (var tag in device.Tags)
                         {
@@ -36,7 +36,7 @@ namespace ModbusSurvey
                             OutputOnScreen(tag);
                         }
                         Console.WriteLine("----------------------------------------");
-                        Thread.Sleep(device._periodSurvey);
+                        Thread.Sleep(device.periodSurvey);
                         Console.Clear();
                     }
                 }
@@ -50,13 +50,13 @@ namespace ModbusSurvey
 
         public object QueryModbus(Tag tag,Device device)
         {
-            switch (tag._functionModbus)
+            switch (tag.functionModbus)
             {
                 case FunctionModbus.COILS:
-                    bool[] tempBool = device._deviceMaster.ReadCoils(
-                       device._deviceAddress,
-                       tag._startAddress,
-                       tag._numberOfPoints);
+                    bool[] tempBool = device.deviceMaster.ReadCoils(
+                       device.deviceAddress,
+                       tag.startAddress,
+                       tag.numberOfPoints);
                     return tempBool;
                 case FunctionModbus.DISCRETE_INPUTS:
                     Console.WriteLine("ERROR");
@@ -67,10 +67,10 @@ namespace ModbusSurvey
                     Console.ReadKey();
                     return null;
                 case FunctionModbus.HOLDING_REGISTERS:
-                    ushort[] tempUshort = device._deviceMaster.ReadHoldingRegisters(
-                        device._deviceAddress,
-                        tag._startAddress,
-                        tag._numberOfPoints);
+                    ushort[] tempUshort = device.deviceMaster.ReadHoldingRegisters(
+                        device.deviceAddress,
+                        tag.startAddress,
+                        tag.numberOfPoints);
                     return tempUshort;
                 case FunctionModbus.SERVER_ONLY:
                     Console.ReadKey();
@@ -82,19 +82,12 @@ namespace ModbusSurvey
             return null;
         }
 
-        public float[] DataFloat(ushort[] dataUshort)
-        {
-            float[] dataFloat = new float[dataUshort.Length / 2];
-            Buffer.BlockCopy(dataUshort, 0, dataFloat, 0, dataUshort.Length * 2);
-            return dataFloat;
-        }
-
         public void SurveyModbus(Tag tag,Device device)
         {
             ushort[] data = (ushort[])QueryModbus(tag,device);
 
             #region Перестановка байт(слов)
-            switch (tag._shuffleBytes)
+            switch (tag.shuffleBytes)
             {
                 case ShuffleBytes.NONE:
                     break;
@@ -107,18 +100,18 @@ namespace ModbusSurvey
             #endregion
 
             #region Обработка типа данных
-            switch (tag._dataType)
+            switch (tag.dataType)
             {
                 case DataType.BOOL:
                     break;
                 case DataType.INT:
-                    tag._valueUshort = data;
+                    tag.valueUshort = data;
                     break;
                 case DataType.FLOAT:
                     //Получем float Значение путем преобразования по стандурту IEEE 754
                     float[] dataFloat = DataFloat(data);
                     //Записываем значение в тег
-                    tag._valueFloat = (float[])dataFloat;
+                    tag.valueFloat = (float[])dataFloat;
                     break;
                 case DataType.STRING:
                     break;
@@ -130,31 +123,31 @@ namespace ModbusSurvey
 
         public void OutputOnScreen(Tag tag)
         {
-            switch (tag._dataType)
+            switch (tag.dataType)
             {
                 case DataType.BOOL:
                     break;
                 case DataType.INT:
-                    for (int i = 0; i < tag._valueUshort.Length; i++)
+                    for (int i = 0; i < tag.valueUshort.Length; i++)
                     {
-                        if (tag._valueUshort[i] == 0)
+                        if (tag.valueUshort[i] == 0)
                             continue;
-                        Console.Write(tag._tagName + " --- ");
+                        Console.Write(tag.ToString() + " --- ");
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.CursorLeft = 32;
-                        Console.WriteLine(tag._valueUshort[i].ToString());
+                        Console.WriteLine(tag.valueUshort[i].ToString());
                         Console.ResetColor();
                     }
                     break;
                 case DataType.FLOAT:
-                    for (int i = 0; i < tag._valueFloat.Length; i++)
+                    for (int i = 0; i < tag.valueFloat.Length; i++)
                     {
-                        if (tag._valueFloat[i] == 0)
+                        if (tag.valueFloat[i] == 0)
                             continue;
-                        Console.Write(tag._tagName + " --- ");
+                        Console.Write(tag.ToString() + " --- ");
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.CursorLeft = 32;
-                        Console.WriteLine(tag._valueFloat[i].ToString("0.00"));
+                        Console.WriteLine(tag.valueFloat[i].ToString("0.00"));
                         Console.ResetColor();
                     }
                     break;
@@ -163,6 +156,23 @@ namespace ModbusSurvey
             }
         }
 
+
+        /// <summary>
+        /// Преобразуют каждые 2 значения массива типа ushort, в одно типа float, в соответствии со стандартом IEEE 754
+        /// </summary>
+        /// <param name="dataUshort">Массив данных типа ushort</param>
+        /// <returns>Массив данных типа float</returns>
+        public float[] DataFloat(ushort[] dataUshort)
+        {
+            float[] dataFloat = new float[dataUshort.Length / 2];
+            Buffer.BlockCopy(dataUshort, 0, dataFloat, 0, dataUshort.Length * 2);
+            return dataFloat;
+        }
+        /// <summary>
+        /// Меняет местами четные и нечетные ячейки массива
+        /// </summary>
+        /// <typeparam name="T">Произвольный массив данных</typeparam>
+        /// <param name="array">Обработанный массив данных</param>
         public void ShuffleWord<T>(T[] array)
         {
             T temp;
@@ -175,7 +185,6 @@ namespace ModbusSurvey
                     array[i - 1] = temp;
                 }
             }
-
         }
     }
 }

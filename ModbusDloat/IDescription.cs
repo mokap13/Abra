@@ -6,14 +6,9 @@ using System.Threading.Tasks;
 
 namespace ModbusSurvey
 {
-    class Server
+    public interface IDescription
     {
-        public List<NodeCOM> Nodes;
-
-        public Server()
-        {
-            Nodes = new List<NodeCOM>();
-        }
-        
+        string Name { get; set; }
+        string Comment { get; set; }
     }
 }

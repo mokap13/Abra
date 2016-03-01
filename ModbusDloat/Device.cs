@@ -8,8 +8,16 @@ using System.Threading.Tasks;
 
 namespace ModbusSurvey
 {
-    class Device
+    class Device:IDescription
     {
+        /// <summary>
+        /// Название устройства
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Комментарии к устройству
+        /// </summary>
+        public string Comment { get; set; }
         /// <summary>
         /// Список тегов
         /// </summary>
@@ -17,69 +25,67 @@ namespace ModbusSurvey
         /// <summary>
         /// Ведущее(мастер) устройство
         /// </summary>
-        public ModbusSerialMaster _deviceMaster { get; set; }
+        public ModbusSerialMaster deviceMaster { get; set; }
         /// <summary>
         /// Тип протокола
         /// </summary>
-        public DeviceType _deviceType { get; set; }
+        private DeviceType deviceType { get; set; }
         /// <summary>
         /// Тип обмена данными
         /// </summary>
-        public ExchangeType _exchangeType { get; set; }
-        /// <summary>
-        /// Название устройства
-        /// </summary>
-        public string _deviceName { get; set; }
-        /// <summary>
-        /// Комментарии к устройству
-        /// </summary>
-        private string _deviceComment { get; set; }
+        private ExchangeType exchangeType { get; set; }
         /// <summary>
         /// Адрес устройства
         /// </summary>
-        public byte _deviceAddress { get; set; }
+        public byte deviceAddress { get; set; }
         /// <summary>
         /// Допустимое время ответа устройства
         /// </summary>
-        public TimeSpan _timeResponse { get; set; }
+        public TimeSpan timeResponse { get; set; }
         /// <summary>
         /// Кол-во игнорирований ошибок
         /// </summary>
-        public ushort _repeatAfterError { get; set; }
+        public ushort repeatAfterError { get; set; }
         /// <summary>
         /// Пауза после получения ошибки
         /// </summary>
-        public TimeSpan _timeRepeatAfterError { get; set; }
+        public TimeSpan timeRepeatAfterError { get; set; }
         /// <summary>
         /// Период опроса
         /// </summary>
-        public TimeSpan _periodSurvey { get; set; }
+        public TimeSpan periodSurvey { get; set; }
         /// <summary>
         /// Задержка послле получения ответа
         /// </summary>
-        public TimeSpan _delayAfterResponse { get; set; }
-
+        public TimeSpan delayAfterResponse { get; set; }
+        /// <summary>
+        /// Конструктор с настройками по умолчанию
+        /// </summary>
         public Device()
         {
             Tags = new List<Tag>();
             //Настройки по умолчанию
-            _deviceType = DeviceType.MODBUS;
-            _exchangeType = ExchangeType.RTU;
-            _deviceName = "Device";
-            _deviceAddress = 1;
-            _timeResponse = TimeSpan.FromMilliseconds(1000);
-            _repeatAfterError = 3;
-            _timeRepeatAfterError = TimeSpan.FromMilliseconds(10000);
-            _periodSurvey = TimeSpan.FromMilliseconds(1000);
-            _delayAfterResponse = TimeSpan.FromMilliseconds(4);
+            deviceType = DeviceType.MODBUS;
+            exchangeType = ExchangeType.RTU;
+            Name = "Device";
+            deviceAddress = 1;
+            timeResponse = TimeSpan.FromMilliseconds(1000);
+            repeatAfterError = 3;
+            timeRepeatAfterError = TimeSpan.FromMilliseconds(10000);
+            periodSurvey = TimeSpan.FromMilliseconds(1000);
+            delayAfterResponse = TimeSpan.FromMilliseconds(4);
         }
 
-        public void CreateModbusMaster(Node node)
+        public void CreateModbusMaster(NodeCOM node)
         {
-            if (_exchangeType == ExchangeType.RTU)
-                _deviceMaster = ModbusSerialMaster.CreateRtu(node._serialPort);
-            else if (_exchangeType == ExchangeType.ASCII)
-                _deviceMaster = ModbusSerialMaster.CreateAscii(node._serialPort);
+            if (exchangeType == ExchangeType.RTU)
+                deviceMaster = ModbusSerialMaster.CreateRtu(node.serialPort);
+            else if (exchangeType == ExchangeType.ASCII)
+                deviceMaster = ModbusSerialMaster.CreateAscii(node.serialPort);
+        }
+        public void CreateModbusMaster(NodeTCP node)
+        {
+            deviceMaster = ModbusSerialMaster.CreateRtu(node._tcpClient);
         }
     }
     /// <summary>
