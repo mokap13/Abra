@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<FBConfig>
+  <Map>
+    <Item>
+      <Pout ID="1" Name="Выход1" Type="Целый"/>
+      <Pout ID="2" Name="Выход2" Type="Целый"/>
+      <Pout ID="3" Name="Выход2" Type="Целый"/>
+      <Pout ID="4" Name="Выход2" Type="Целый"/>
+    </Item>
+  </Map>
+</FBConfig>
