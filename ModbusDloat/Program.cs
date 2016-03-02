@@ -23,27 +23,18 @@ namespace ModbusSurvey
 
             Device TestDevice = new Device();
             TestDevice.periodSurvey = TimeSpan.FromMilliseconds(2000);
-            TestDevice.startAddress = 0;
-            TestDevice.numberOfPoints = 50;
+            TestDevice.startAddress = 4;
+            TestDevice.numberOfPoints = 46;
             TestNode.Devices.Add(TestDevice);
 
             Tag TestTag = new Tag();
-            TestTag.dataType = DataType.INT;
-            TestTag.shuffleBytes = ShuffleBytes.NONE;
+            TestTag.dataType = DataType.FLOAT;
+            TestTag.shuffleBytes = ShuffleBytes.HIGHER_WORD_AHEAD;
             TestDevice.Tags.Add(TestTag);
 
             SurveyEngine surveyEngine = new SurveyEngine(server);
 
             surveyEngine.StartSurvey();
-        }
-
-        public static void CreateConnection(NodeCOM node, Device device)
-        {
-            //node.CreateSerialPort();
-            //node._serialPort.Open();
-            //device.CreateModbusMaster(node);
-            
-            //device.Master = ModbusSerialMaster.CreateRtu(node._serialPort);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ModbusSurvey
 {
-    class Tag:IDescription
+    class Tag : IDescription
     {
         /// <summary>
         /// Название тега
@@ -17,17 +17,9 @@ namespace ModbusSurvey
         /// </summary>
         public string Comment { get; set; }
         /// <summary>
-        /// Функция запроса протокола MODBUS
-        /// </summary>
-        public FunctionModbus functionModbus { get; set; }
-        /// <summary>
         /// Тип запрашиваемых данных
         /// </summary>
         public DataType dataType { get; set; }
-        /// <summary>
-        /// Тип доступа
-        /// </summary>
-        public AccessType accessType { get; set; }
         /// <summary>
         /// Перестановка байт(слов)
         /// </summary>
@@ -37,27 +29,20 @@ namespace ModbusSurvey
         /// </summary>
         public float[] valueFloat;
         public ushort[] valueUshort;
+        public bool[] valueBool;
+
+        public ushort Address;
         public Tag()
         {
             Name = "Tag";
-            functionModbus = FunctionModbus.HOLDING_REGISTERS;
+            
             dataType = DataType.FLOAT;
-            accessType = AccessType.READ_ONLY;
+            
             shuffleBytes = ShuffleBytes.HIGHER_WORD_AHEAD;
         }
 
     }
-    /// <summary>
-    /// Тип функции запроса
-    /// </summary>
-    enum FunctionModbus
-    {
-        COILS,
-        DISCRETE_INPUTS,
-        INPUT_REGISTERS,
-        HOLDING_REGISTERS,
-        SERVER_ONLY
-    }
+    
     /// <summary>
     /// Тип запрашиваемых данных
     /// </summary>
@@ -65,13 +50,7 @@ namespace ModbusSurvey
     {
         BOOL, INT, FLOAT, STRING
     }
-    /// <summary>
-    /// Тип доступа к данным
-    /// </summary>
-    enum AccessType
-    {
-        READ_ONLY, WRITE_ONLY, READ_WRITE
-    }
+ 
     /// <summary>
     /// Перестановка байт(слов)
     /// </summary>

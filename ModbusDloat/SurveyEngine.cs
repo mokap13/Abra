@@ -37,13 +37,10 @@ namespace ModbusSurvey
                         {
                             device.CreateModbusMaster(node); 
                         }
-                        foreach (var tag in device.Tags)
-                        {
-                            Console.Clear();
-                            SurveyModbus(tag, device);
-                            OutputOnScreen(tag);
-                            Thread.Sleep(device.periodSurvey);
-                        }
+                        Console.Clear();
+                        SurveyModbus(device);
+                        OutputOnScreen(device);
+                        Thread.Sleep(device.periodSurvey);
                     }
                 }
             }
@@ -54,9 +51,9 @@ namespace ModbusSurvey
 
         }
 
-        public object QueryModbus(Tag tag, Device device)
+        public object QueryModbus(Device device)
         {
-            switch (tag.functionModbus)
+            switch (device.functionModbus)
             {
                 case FunctionModbus.COILS:
                     bool[] tempBool = device.Master.ReadCoils(
@@ -65,12 +62,8 @@ namespace ModbusSurvey
                        device.numberOfPoints);
                     return tempBool;
                 case FunctionModbus.DISCRETE_INPUTS:
-                    Console.WriteLine("ERROR");
-                    Console.ReadKey();
                     return null;
                 case FunctionModbus.INPUT_REGISTERS:
-                    Console.WriteLine("ERROR");
-                    Console.ReadKey();
                     return null;
                 case FunctionModbus.HOLDING_REGISTERS:
                     ushort[] tempUshort = device.Master.ReadHoldingRegisters(
@@ -79,86 +72,100 @@ namespace ModbusSurvey
                         device.numberOfPoints);
                     return tempUshort;
                 case FunctionModbus.SERVER_ONLY:
-                    Console.ReadKey();
-                    Console.WriteLine("ERROR");
                     return null;
             }
-            Console.WriteLine("ERROR");
-            Console.ReadKey();
             return null;
         }
 
-        public void SurveyModbus(Tag tag, Device device)
+        public void SurveyModbus(Device device)
         {
-            ushort[] data = (ushort[])QueryModbus(tag, device);
+            //const int MINIMUM_NUMBER_OF_POINTS = 2;
+
+            //int addressFirstTag = device.Tags.First<Tag>().Address;
+            //int addressLastTag = device.Tags.Last<Tag>().Address;
+            //int lengthAddresses = addressLastTag - addressFirstTag + MINIMUM_NUMBER_OF_POINTS;
+
+            //device.startAddress = (ushort)addressFirstTag;
+            //device.numberOfPoints = (ushort)lengthAddresses;
+
+            ushort[] data = (ushort[])QueryModbus(device);
 
             #region Перестановка байт(слов)
-            switch (tag.shuffleBytes)
+            foreach (var tag in device.Tags)
             {
-                case ShuffleBytes.NONE:
-                    break;
-                case ShuffleBytes.HIGHER_WORD_AHEAD:
-                    ShuffleWord(data);
-                    break;
-                case ShuffleBytes.HIGHER_BYTE_AHEAD:
-                    break;
+                switch (tag.shuffleBytes)
+                {
+                    case ShuffleBytes.NONE:
+                        break;
+                    case ShuffleBytes.HIGHER_WORD_AHEAD:
+                        ShuffleWord(data);
+                        break;
+                    case ShuffleBytes.HIGHER_BYTE_AHEAD:
+                        break;
+                } 
             }
             #endregion
 
-            #region Обработка типа данных
-            switch (tag.dataType)
+            foreach (var tag in device.Tags)
             {
-                case DataType.BOOL:
-                    break;
-                case DataType.INT:
-                    tag.valueUshort = data;
-                    break;
-                case DataType.FLOAT:
-                    //Получем float Значение путем преобразования по стандурту IEEE 754
-                    float[] dataFloat = DataFloat(data);
-                    //Записываем значение в тег
-                    tag.valueFloat = (float[])dataFloat;
-                    break;
-                case DataType.STRING:
-                    break;
-                default:
-                    break;
+                #region Обработка типа данных
+                switch (tag.dataType)
+                {
+                    case DataType.BOOL:
+                        break;
+                    case DataType.INT:
+                        tag.valueUshort = data;
+                        break;
+                    case DataType.FLOAT:
+                        //Получем float Значение путем преобразования по стандурту IEEE 754
+                        float[] dataFloat = DataFloat(data);
+                        //Записываем значение в тег
+                        tag.valueFloat = (float[])dataFloat;
+                        break;
+                    case DataType.STRING:
+                        break;
+                    default:
+                        break;
+                }
+                #endregion 
             }
-            #endregion
         }
 
-        public void OutputOnScreen(Tag tag)
+        public void OutputOnScreen(Device device)
         {
-            switch (tag.dataType)
+            foreach (var tag in device.Tags)
             {
-                case DataType.BOOL:
-                    break;
-                case DataType.INT:
-                    for (int i = 0; i < tag.valueUshort.Length; i++)
-                    {
-                        if (tag.valueUshort[i] == 0)
-                            continue;
-                        Console.Write(tag.ToString() + " --- ");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.CursorLeft = 32;
-                        Console.WriteLine(tag.valueUshort[i].ToString());
-                        Console.ResetColor();
-                    }
-                    break;
-                case DataType.FLOAT:
-                    for (int i = 0; i < tag.valueFloat.Length; i++)
-                    {
-                        if (tag.valueFloat[i] == 0)
-                            continue;
-                        Console.Write(tag.ToString() + " --- ");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.CursorLeft = 32;
-                        Console.WriteLine(tag.valueFloat[i].ToString("0.00"));
-                        Console.ResetColor();
-                    }
-                    break;
-                case DataType.STRING:
-                    break;
+                switch (tag.dataType)
+                {
+                    case DataType.BOOL:
+                        break;
+                    case DataType.INT:
+                        for (int i = 0; i < tag.valueUshort.Length; i++)
+                        {
+                            if (tag.valueUshort[i] == 0)
+                                continue;
+                            Console.Write(tag.ToString() + " --- ");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.CursorLeft = 32;
+                            Console.WriteLine(tag.valueUshort[i].ToString());
+                            Console.ResetColor();
+                        }
+                        break;
+                    case DataType.FLOAT:
+                        for (int i = 0; i < tag.valueFloat.Length; i++)
+                        {
+                            if (tag.valueFloat[i] == 0)
+                                continue;
+                            Console.Write(tag.ToString() + " --- ");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.CursorLeft = 32;
+                            Console.WriteLine(tag.valueFloat[i].ToString("0.00"));
+                            Console.ResetColor();
+                        }
+                        break;
+                    case DataType.STRING:
+                        break;
+                } 
             }
         }
 

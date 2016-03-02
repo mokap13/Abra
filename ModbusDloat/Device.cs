@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ModbusSurvey
 {
-    class Device:IDescription
+    class Device : IDescription
     {
         /// <summary>
         /// Название устройства
@@ -67,6 +67,14 @@ namespace ModbusSurvey
         /// </summary>
         public ushort numberOfPoints { get; set; }
         /// <summary>
+        /// Функция запроса протокола MODBUS
+        /// </summary>
+        public FunctionModbus functionModbus { get; set; }
+        /// <summary>
+        /// Тип доступа
+        /// </summary>
+        public AccessType accessType { get; set; }
+        /// <summary>
         /// Конструктор с настройками по умолчанию
         /// </summary>
         public Device()
@@ -84,6 +92,8 @@ namespace ModbusSurvey
             delayAfterResponse = TimeSpan.FromMilliseconds(4);
             startAddress = 0;
             numberOfPoints = 2;
+            functionModbus = FunctionModbus.HOLDING_REGISTERS;
+            accessType = AccessType.READ_ONLY;
         }
 
         public void CreateModbusMaster(NodeCOM node)
@@ -108,5 +118,23 @@ namespace ModbusSurvey
     enum ExchangeType
     {
         ASCII, RTU
+    }
+    /// <summary>
+    /// Тип функции запроса
+    /// </summary>
+    enum FunctionModbus
+    {
+        COILS,
+        DISCRETE_INPUTS,
+        INPUT_REGISTERS,
+        HOLDING_REGISTERS,
+        SERVER_ONLY
+    }
+    /// <summary>
+    /// Тип доступа к данным
+    /// </summary>
+    enum AccessType
+    {
+        READ_ONLY, WRITE_ONLY, READ_WRITE
     }
 }
