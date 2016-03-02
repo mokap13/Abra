@@ -27,10 +27,10 @@ namespace ModbusSurvey
         /// <summary>
         /// Полученные данные регистра
         /// </summary>
-        public float[] valueFloat;
-        public ushort[] valueUshort;
-        public bool[] valueBool;
-
+        public float valueFloat;
+        public ushort valueUshort;
+        public bool valueBool;
+        
         public ushort Address;
         public Tag()
         {

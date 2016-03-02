@@ -79,55 +79,57 @@ namespace ModbusSurvey
 
         public void SurveyModbus(Device device)
         {
-            //const int MINIMUM_NUMBER_OF_POINTS = 2;
+            const int MINIMUM_NUMBER_OF_POINTS = 2;
 
-            //int addressFirstTag = device.Tags.First<Tag>().Address;
-            //int addressLastTag = device.Tags.Last<Tag>().Address;
-            //int lengthAddresses = addressLastTag - addressFirstTag + MINIMUM_NUMBER_OF_POINTS;
+            int addressFirstTag = device.Tags.First<Tag>().Address;
+            int addressLastTag = device.Tags.Last<Tag>().Address;
+            int lengthAddresses = addressLastTag - addressFirstTag + MINIMUM_NUMBER_OF_POINTS;
 
-            //device.startAddress = (ushort)addressFirstTag;
-            //device.numberOfPoints = (ushort)lengthAddresses;
+            device.startAddress = (ushort)addressFirstTag;
+            device.numberOfPoints = (ushort)lengthAddresses;
 
             ushort[] data = (ushort[])QueryModbus(device);
-
-            #region Перестановка байт(слов)
+            ushort[] temp = new ushort[2];
+            
             foreach (var tag in device.Tags)
             {
+            #region Перестановка байт(слов)
+                int addressForTag = tag.Address - device.startAddress;
+                temp[0] = data[addressForTag];
+                temp[1] = data[addressForTag + 1];
+
                 switch (tag.shuffleBytes)
                 {
                     case ShuffleBytes.NONE:
                         break;
                     case ShuffleBytes.HIGHER_WORD_AHEAD:
-                        ShuffleWord(data);
+                        ShuffleWord(temp);
                         break;
                     case ShuffleBytes.HIGHER_BYTE_AHEAD:
                         break;
                 } 
-            }
             #endregion
 
-            foreach (var tag in device.Tags)
-            {
-                #region Обработка типа данных
+            #region Обработка типа данных
                 switch (tag.dataType)
                 {
                     case DataType.BOOL:
                         break;
                     case DataType.INT:
-                        tag.valueUshort = data;
+                        tag.valueUshort = temp[0];
                         break;
                     case DataType.FLOAT:
                         //Получем float Значение путем преобразования по стандурту IEEE 754
-                        float[] dataFloat = DataFloat(data);
+                        float dataFloat = DataFloat(temp[addressForTag],temp[addressForTag + 1]);
                         //Записываем значение в тег
-                        tag.valueFloat = (float[])dataFloat;
+                        tag.valueFloat = dataFloat;
                         break;
                     case DataType.STRING:
                         break;
                     default:
                         break;
                 }
-                #endregion 
+            #endregion 
             }
         }
 
@@ -140,47 +142,25 @@ namespace ModbusSurvey
                     case DataType.BOOL:
                         break;
                     case DataType.INT:
-                        for (int i = 0; i < tag.valueUshort.Length; i++)
-                        {
-                            if (tag.valueUshort[i] == 0)
-                                continue;
                             Console.Write(tag.ToString() + " --- ");
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.CursorLeft = 32;
-                            Console.WriteLine(tag.valueUshort[i].ToString());
+                            Console.WriteLine(tag.valueUshort.ToString());
                             Console.ResetColor();
-                        }
                         break;
                     case DataType.FLOAT:
-                        for (int i = 0; i < tag.valueFloat.Length; i++)
-                        {
-                            if (tag.valueFloat[i] == 0)
-                                continue;
                             Console.Write(tag.ToString() + " --- ");
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.CursorLeft = 32;
-                            Console.WriteLine(tag.valueFloat[i].ToString("0.00"));
+                            Console.WriteLine(tag.valueFloat.ToString("0.00"));
                             Console.ResetColor();
-                        }
                         break;
                     case DataType.STRING:
                         break;
                 } 
             }
         }
-
-
-        /// <summary>
-        /// Преобразуют каждые 2 значения массива типа ushort, в одно типа float, в соответствии со стандартом IEEE 754
-        /// </summary>
-        /// <param name="dataUshort">Массив данных типа ushort</param>
-        /// <returns>Массив данных типа float</returns>
-        public float[] DataFloat(ushort[] dataUshort)
-        {
-            float[] dataFloat = new float[dataUshort.Length / 2];
-            Buffer.BlockCopy(dataUshort, 0, dataFloat, 0, dataUshort.Length * 2);
-            return dataFloat;
-        }
+        
         /// <summary>
         /// Меняет местами четные и нечетные ячейки массива
         /// </summary>
@@ -199,6 +179,32 @@ namespace ModbusSurvey
                 }
             }
         }
+        /// <summary>
+        /// Преобразуют 2 значения типа ushort, в одно типа float, в соответствии со стандартом IEEE 754
+        /// </summary>
+        /// <param name="dataUshort">Массив данных типа ushort</param>
+        /// <returns>Массив данных типа float</returns>
+        public float DataFloat(ushort DataA, ushort DataB)
+        {
+            ushort[] dataUshort = new ushort[2];
+            dataUshort[0] = DataA;
+            dataUshort[1] = DataB;
+            float[] dataFloat = new float[1];
 
+            Buffer.BlockCopy(dataUshort, 0, dataFloat, 0, dataUshort.Length * 2);
+
+            return dataFloat[0];
+        }
+        /// <summary>
+        /// Преобразуют каждые 2 значения массива типа ushort, в одно типа float, в соответствии со стандартом IEEE 754
+        /// </summary>
+        /// <param name="dataUshort">Массив данных типа ushort</param>
+        /// <returns>Массив данных типа float</returns>
+        public float[] DataFloat(ushort[] dataUshort)
+        {
+            float[] dataFloat = new float[dataUshort.Length / 2];
+            Buffer.BlockCopy(dataUshort, 0, dataFloat, 0, dataUshort.Length * 2);
+            return dataFloat;
+        }
     }
 }

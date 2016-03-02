@@ -23,14 +23,25 @@ namespace ModbusSurvey
 
             Device TestDevice = new Device();
             TestDevice.periodSurvey = TimeSpan.FromMilliseconds(2000);
-            TestDevice.startAddress = 4;
-            TestDevice.numberOfPoints = 46;
             TestNode.Devices.Add(TestDevice);
 
             Tag TestTag = new Tag();
             TestTag.dataType = DataType.FLOAT;
             TestTag.shuffleBytes = ShuffleBytes.HIGHER_WORD_AHEAD;
+            TestTag.Address = 4;
             TestDevice.Tags.Add(TestTag);
+
+            Tag TestTag2 = new Tag();
+            TestTag2.dataType = DataType.INT;
+            TestTag2.shuffleBytes = ShuffleBytes.NONE;
+            TestTag2.Address = 10;
+            TestDevice.Tags.Add(TestTag2);
+
+            Tag TestTag3 = new Tag();
+            TestTag3.dataType = DataType.INT;
+            TestTag3.shuffleBytes = ShuffleBytes.NONE;
+            TestTag3.Address = 50;
+            TestDevice.Tags.Add(TestTag3);
 
             SurveyEngine surveyEngine = new SurveyEngine(server);
 
