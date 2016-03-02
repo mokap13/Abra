@@ -7,28 +7,40 @@ using System.Net.Sockets;
 
 namespace ModbusSurvey
 {
-    class NodeTCP
+    class NodeTCP:Node
     {
-        public TcpClient _tcpClient;
+       // public List<Device> Devices;
+        //public string Name { get; set; }
+        //public string Comment { get; set; }
+        public TcpClient tcpClient;
         /// <summary>
         /// IP адрес 
         /// </summary>
-        public string _ipAddress;
+        public string ipAddress;
         /// <summary>
         /// Номер порта
         /// </summary>
-        public ushort _ipPort;
+        public ushort ipPort;
 
         public NodeTCP()
         {
             //Харакатиристики TCP/IP
-            _ipAddress = "127.0.0.0";
-            _ipPort = 502;
+            ipAddress = "192.168.42.198";
+            ipPort = 502;
+
+            Devices = new List<Device>();
         }
 
-        public void CreateTcpClient()
+        public override void CreatePort()
         {
-            
+            if (tcpClient == null)
+            {
+                tcpClient = new TcpClient(); 
+            }
+        }
+        public override void OpenPort()
+        {
+                tcpClient.BeginConnect(ipAddress, ipPort, null, null); 
         }
     }
 }

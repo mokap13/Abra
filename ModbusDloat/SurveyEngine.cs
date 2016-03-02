@@ -25,18 +25,15 @@ namespace ModbusSurvey
                 foreach (var node in server.Nodes)
                 {
                     //Создаем порт и открываем его, если он еще не создан
-                    if (node.serialPort == null || node.serialPort.IsOpen == false)
-                    {
-                        node.CreateSerialPort();
-                        node.serialPort.Open(); 
-                    }
+                        node.CreatePort();
+                        node.OpenPort();
 
                     foreach (var device in node.Devices)
                     {
                         if (device.Master == null) 
                         {
                             device.CreateModbusMaster(node); 
-                        }
+                        }   
                         SurveyModbus(device);
                         OutputOnScreen.Show(server);
                         Thread.Sleep(device.periodSurvey);

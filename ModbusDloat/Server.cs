@@ -8,11 +8,11 @@ namespace ModbusSurvey
 {
     class Server
     {
-        public List<NodeCOM> Nodes;
+        public List<Node> Nodes;
 
         public Server()
         {
-            Nodes = new List<NodeCOM>();
+            Nodes = new List<Node>();
         }
         
     }

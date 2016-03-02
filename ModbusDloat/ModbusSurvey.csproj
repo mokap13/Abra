@@ -47,6 +47,7 @@
     <Compile Include="IDescription.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="ModbusRequest.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="NodeCOM.cs" />
     <Compile Include="NodeTCP.cs" />
     <Compile Include="OutputOnScreen.cs" />

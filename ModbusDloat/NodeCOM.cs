@@ -7,20 +7,13 @@ using System.Threading.Tasks;
 
 namespace ModbusSurvey
 {
-    class NodeCOM
+    class NodeCOM:Node
     {
-        /// <summary>
-        /// Имя узла
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// Комментарий узла
-        /// </summary>
-        public string Comment { get; set; }
+        
         /// <summary>
         /// Список устройств узла
         /// </summary>
-        public List<Device> Devices;
+        //public List<Device> Devices;
         /// <summary>
         /// Последовательный порт
         /// </summary>
@@ -65,9 +58,17 @@ namespace ModbusSurvey
         /// <summary>
         /// Создает последовательный порт с настройками объекта NodeCom
         /// </summary>
-        public void CreateSerialPort()
+        public override void CreatePort()
         {
+            if(serialPort == null)
             serialPort = new SerialPort(portName.ToString(), (int)baudRate, parity, dataBits, stopBits);
+        }
+        public override void OpenPort()
+        {
+            if (serialPort.IsOpen == false)
+            {
+                serialPort.Open();
+            }
         }
     }
     /// <summary>

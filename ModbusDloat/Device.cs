@@ -96,16 +96,19 @@ namespace ModbusSurvey
             accessType = AccessType.READ_ONLY;
         }
 
-        public void CreateModbusMaster(NodeCOM node)
+        public void CreateModbusMaster(Node node)
         {
-            if (exchangeType == ExchangeType.RTU)
-                Master = ModbusSerialMaster.CreateRtu(node.serialPort);
-            else if (exchangeType == ExchangeType.ASCII)
-                Master = ModbusSerialMaster.CreateAscii(node.serialPort);
-        }
-        public void CreateModbusMaster(NodeTCP node)
-        {
-            Master = ModbusSerialMaster.CreateRtu(node._tcpClient);
+            if (node is NodeCOM)
+            {
+                if (exchangeType == ExchangeType.RTU)
+                    Master = ModbusSerialMaster.CreateRtu((node as NodeCOM).serialPort);
+                else if (exchangeType == ExchangeType.ASCII)
+                    Master = ModbusSerialMaster.CreateAscii((node as NodeCOM).serialPort); 
+            }
+            if (node is NodeTCP)
+            {
+                Master = ModbusSerialMaster.CreateRtu((node as NodeTCP).tcpClient);
+            }
         }
     }
     /// <summary>

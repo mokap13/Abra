@@ -18,7 +18,7 @@ namespace ModbusSurvey
 
             NodeCOM TestNode = new NodeCOM();
             TestNode.portName = PortName.COM4;
-            TestNode.CreateSerialPort();
+            TestNode.CreatePort();
             server.Nodes.Add(TestNode);
 
             #region Device 1
@@ -79,7 +79,7 @@ namespace ModbusSurvey
             NodeCOM TestNode2 = new NodeCOM();
             TestNode2.Name = "УЗЕЛ 2";
             TestNode2.portName = PortName.COM5;
-            TestNode2.CreateSerialPort();
+            TestNode2.CreatePort();
             server.Nodes.Add(TestNode2);
 
             Device device11 = new Device();
@@ -101,6 +101,23 @@ namespace ModbusSurvey
             tag12.shuffleBytes = ShuffleBytes.NONE;
             device11.Tags.Add(tag12); 
             #endregion
+
+            //NodeTCP TCPNode = new NodeTCP();
+            //TCPNode.Name = "УЗЕЛ 2";
+            //TCPNode.ipAddress = "192.168.0.130";
+            //server.Nodes.Add(TCPNode);
+
+            //Device TCPdevice = new Device();
+            //TCPdevice.Name = TCPdevice.ToString();
+            //TCPdevice.Address = 1;
+            //TCPNode.Devices.Add(TCPdevice);
+
+            //Tag TCPtag = new Tag();
+            //TCPtag.Address = 8;
+            //TCPtag.Name = "Тег 1 температура";
+            //TCPtag.dataType = DataType.INT;
+            //TCPtag.shuffleBytes = ShuffleBytes.NONE;
+            //TCPdevice.Tags.Add(TCPtag);
 
             SurveyEngine surveyEngine = new SurveyEngine(server);
 
