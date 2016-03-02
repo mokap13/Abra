@@ -14,10 +14,23 @@ namespace ModbusSurvey
         /// <param name="server">Экземпляр сервера</param>
         public static void Show(Server server)
         {
+            Console.Clear();
             foreach (var node in server.Nodes)
             {
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine(node.Name);
+                Console.WriteLine("------------------------------------");
+                Console.ResetColor();
+
                 foreach (var device in node.Devices)
                 {
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine(device.Name);
+                    Console.WriteLine("------------------------------------");
+                    Console.ResetColor();
+
                     foreach (var tag in device.Tags)
                     {
                         Console.Write(tag.Name + " --- ");

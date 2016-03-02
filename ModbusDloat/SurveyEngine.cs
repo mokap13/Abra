@@ -30,16 +30,17 @@ namespace ModbusSurvey
                         node.CreateSerialPort();
                         node.serialPort.Open(); 
                     }
+
                     foreach (var device in node.Devices)
                     {
                         if (device.Master == null) 
                         {
                             device.CreateModbusMaster(node); 
                         }
-                        Console.Clear();
                         SurveyModbus(device);
                         OutputOnScreen.Show(server);
                         Thread.Sleep(device.periodSurvey);
+                        
                     }
                 }
             }
@@ -92,7 +93,7 @@ namespace ModbusSurvey
                         tag.valueUshort = temp[0];
                         break;
                     case DataType.FLOAT:
-                        tag.valueFloat = ParseFloat(temp[indexTag],temp[indexTag + 1]);
+                        tag.valueFloat = ParseFloat(temp[0],temp[1]);
                         break;
                     case DataType.STRING:
                         break;
