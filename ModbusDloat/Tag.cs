@@ -21,14 +21,6 @@ namespace ModbusSurvey
         /// </summary>
         public FunctionModbus functionModbus { get; set; }
         /// <summary>
-        /// Первый из запрашиваемых регистров
-        /// </summary>
-        public ushort startAddress { get; set; }
-        /// <summary>
-        /// Кол-во запрашиваемых регистров
-        /// </summary>
-        public ushort numberOfPoints { get; set; }
-        /// <summary>
         /// Тип запрашиваемых данных
         /// </summary>
         public DataType dataType { get; set; }
@@ -49,8 +41,6 @@ namespace ModbusSurvey
         {
             Name = "Tag";
             functionModbus = FunctionModbus.HOLDING_REGISTERS;
-            startAddress = 0;
-            numberOfPoints = 2;
             dataType = DataType.FLOAT;
             accessType = AccessType.READ_ONLY;
             shuffleBytes = ShuffleBytes.HIGHER_WORD_AHEAD;

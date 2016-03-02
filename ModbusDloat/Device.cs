@@ -59,6 +59,14 @@ namespace ModbusSurvey
         /// </summary>
         public TimeSpan delayAfterResponse { get; set; }
         /// <summary>
+        /// Первый из запрашиваемых регистров
+        /// </summary>
+        public ushort startAddress { get; set; }
+        /// <summary>
+        /// Кол-во запрашиваемых регистров
+        /// </summary>
+        public ushort numberOfPoints { get; set; }
+        /// <summary>
         /// Конструктор с настройками по умолчанию
         /// </summary>
         public Device()
@@ -74,6 +82,8 @@ namespace ModbusSurvey
             timeRepeatAfterError = TimeSpan.FromMilliseconds(10000);
             periodSurvey = TimeSpan.FromMilliseconds(1000);
             delayAfterResponse = TimeSpan.FromMilliseconds(4);
+            startAddress = 0;
+            numberOfPoints = 2;
         }
 
         public void CreateModbusMaster(NodeCOM node)

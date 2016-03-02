@@ -39,8 +39,10 @@ namespace ModbusSurvey
                         }
                         foreach (var tag in device.Tags)
                         {
+                            Console.Clear();
                             SurveyModbus(tag, device);
                             OutputOnScreen(tag);
+                            Thread.Sleep(device.periodSurvey);
                         }
                     }
                 }
@@ -59,8 +61,8 @@ namespace ModbusSurvey
                 case FunctionModbus.COILS:
                     bool[] tempBool = device.Master.ReadCoils(
                        device.Address,
-                       tag.startAddress,
-                       tag.numberOfPoints);
+                       device.startAddress,
+                       device.numberOfPoints);
                     return tempBool;
                 case FunctionModbus.DISCRETE_INPUTS:
                     Console.WriteLine("ERROR");
@@ -73,8 +75,8 @@ namespace ModbusSurvey
                 case FunctionModbus.HOLDING_REGISTERS:
                     ushort[] tempUshort = device.Master.ReadHoldingRegisters(
                         device.Address,
-                        tag.startAddress,
-                        tag.numberOfPoints);
+                        device.startAddress,
+                        device.numberOfPoints);
                     return tempUshort;
                 case FunctionModbus.SERVER_ONLY:
                     Console.ReadKey();
@@ -190,5 +192,6 @@ namespace ModbusSurvey
                 }
             }
         }
+
     }
 }
