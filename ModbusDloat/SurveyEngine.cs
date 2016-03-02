@@ -18,9 +18,8 @@ namespace ModbusSurvey
             server = _server;
         }
 
-        public void StartSurvey()
+        public void PrepareSurvey()
         {
-
             while (true)
             {
                 foreach (var node in server.Nodes)
@@ -39,7 +38,7 @@ namespace ModbusSurvey
                         }
                         Console.Clear();
                         SurveyModbus(device);
-                        OutputOnScreen(device);
+                        OutputOnScreen.Show(server);
                         Thread.Sleep(device.periodSurvey);
                     }
                 }
@@ -51,7 +50,60 @@ namespace ModbusSurvey
 
         }
 
-        public object QueryModbus(Device device)
+        public void SurveyModbus(Device device)
+        {
+            const int MINIMUM_NUMBER_OF_POINTS = 2;
+
+            int addressFirstTag = device.Tags.First<Tag>().Address;
+            int addressLastTag = device.Tags.Last<Tag>().Address;
+            int lengthAddresses = addressLastTag - addressFirstTag + MINIMUM_NUMBER_OF_POINTS;
+
+            device.startAddress = (ushort)addressFirstTag;
+            device.numberOfPoints = (ushort)lengthAddresses;
+
+            ushort[] data = (ushort[])SendRequest(device);
+            ushort[] temp = new ushort[2];
+            
+            foreach (var tag in device.Tags)
+            {
+                int indexTag = tag.Address - device.startAddress;
+                temp[0] = data[indexTag];
+                temp[1] = data[indexTag + 1];
+
+            #region Перестановка байт(слов)
+                switch (tag.shuffleBytes)
+                {
+                    case ShuffleBytes.NONE:
+                        break;
+                    case ShuffleBytes.HIGHER_WORD_AHEAD:
+                        ShuffleWord(temp);
+                        break;
+                    case ShuffleBytes.HIGHER_BYTE_AHEAD:
+                        break;
+                } 
+            #endregion
+
+            #region Обработка типа данных
+                switch (tag.dataType)
+                {
+                    case DataType.BOOL:
+                        break;
+                    case DataType.INT:
+                        tag.valueUshort = temp[0];
+                        break;
+                    case DataType.FLOAT:
+                        tag.valueFloat = ParseFloat(temp[indexTag],temp[indexTag + 1]);
+                        break;
+                    case DataType.STRING:
+                        break;
+                    default:
+                        break;
+                }
+            #endregion 
+            }
+        }
+
+        public object SendRequest(Device device)
         {
             switch (device.functionModbus)
             {
@@ -75,90 +127,6 @@ namespace ModbusSurvey
                     return null;
             }
             return null;
-        }
-
-        public void SurveyModbus(Device device)
-        {
-            const int MINIMUM_NUMBER_OF_POINTS = 2;
-
-            int addressFirstTag = device.Tags.First<Tag>().Address;
-            int addressLastTag = device.Tags.Last<Tag>().Address;
-            int lengthAddresses = addressLastTag - addressFirstTag + MINIMUM_NUMBER_OF_POINTS;
-
-            device.startAddress = (ushort)addressFirstTag;
-            device.numberOfPoints = (ushort)lengthAddresses;
-
-            ushort[] data = (ushort[])QueryModbus(device);
-            ushort[] temp = new ushort[2];
-            
-            foreach (var tag in device.Tags)
-            {
-            #region Перестановка байт(слов)
-                int addressForTag = tag.Address - device.startAddress;
-                temp[0] = data[addressForTag];
-                temp[1] = data[addressForTag + 1];
-
-                switch (tag.shuffleBytes)
-                {
-                    case ShuffleBytes.NONE:
-                        break;
-                    case ShuffleBytes.HIGHER_WORD_AHEAD:
-                        ShuffleWord(temp);
-                        break;
-                    case ShuffleBytes.HIGHER_BYTE_AHEAD:
-                        break;
-                } 
-            #endregion
-
-            #region Обработка типа данных
-                switch (tag.dataType)
-                {
-                    case DataType.BOOL:
-                        break;
-                    case DataType.INT:
-                        tag.valueUshort = temp[0];
-                        break;
-                    case DataType.FLOAT:
-                        //Получем float Значение путем преобразования по стандурту IEEE 754
-                        float dataFloat = DataFloat(temp[addressForTag],temp[addressForTag + 1]);
-                        //Записываем значение в тег
-                        tag.valueFloat = dataFloat;
-                        break;
-                    case DataType.STRING:
-                        break;
-                    default:
-                        break;
-                }
-            #endregion 
-            }
-        }
-
-        public void OutputOnScreen(Device device)
-        {
-            foreach (var tag in device.Tags)
-            {
-                switch (tag.dataType)
-                {
-                    case DataType.BOOL:
-                        break;
-                    case DataType.INT:
-                            Console.Write(tag.ToString() + " --- ");
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.CursorLeft = 32;
-                            Console.WriteLine(tag.valueUshort.ToString());
-                            Console.ResetColor();
-                        break;
-                    case DataType.FLOAT:
-                            Console.Write(tag.ToString() + " --- ");
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.CursorLeft = 32;
-                            Console.WriteLine(tag.valueFloat.ToString("0.00"));
-                            Console.ResetColor();
-                        break;
-                    case DataType.STRING:
-                        break;
-                } 
-            }
         }
         
         /// <summary>
@@ -184,7 +152,7 @@ namespace ModbusSurvey
         /// </summary>
         /// <param name="dataUshort">Массив данных типа ushort</param>
         /// <returns>Массив данных типа float</returns>
-        public float DataFloat(ushort DataA, ushort DataB)
+        public float ParseFloat(ushort DataA, ushort DataB)
         {
             ushort[] dataUshort = new ushort[2];
             dataUshort[0] = DataA;
@@ -200,7 +168,7 @@ namespace ModbusSurvey
         /// </summary>
         /// <param name="dataUshort">Массив данных типа ushort</param>
         /// <returns>Массив данных типа float</returns>
-        public float[] DataFloat(ushort[] dataUshort)
+        public float[] ParseFloat(ushort[] dataUshort)
         {
             float[] dataFloat = new float[dataUshort.Length / 2];
             Buffer.BlockCopy(dataUshort, 0, dataFloat, 0, dataUshort.Length * 2);

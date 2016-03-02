@@ -49,6 +49,7 @@
     <Compile Include="ModbusRequest.cs" />
     <Compile Include="NodeCOM.cs" />
     <Compile Include="NodeTCP.cs" />
+    <Compile Include="OutputOnScreen.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />

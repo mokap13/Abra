@@ -26,18 +26,21 @@ namespace ModbusSurvey
             TestNode.Devices.Add(TestDevice);
 
             Tag TestTag = new Tag();
+            TestTag.Name = "Температура";
             TestTag.dataType = DataType.FLOAT;
             TestTag.shuffleBytes = ShuffleBytes.HIGHER_WORD_AHEAD;
             TestTag.Address = 4;
             TestDevice.Tags.Add(TestTag);
 
             Tag TestTag2 = new Tag();
+            TestTag2.Name = "Влажность";
             TestTag2.dataType = DataType.INT;
             TestTag2.shuffleBytes = ShuffleBytes.NONE;
             TestTag2.Address = 10;
             TestDevice.Tags.Add(TestTag2);
 
             Tag TestTag3 = new Tag();
+            TestTag3.Name = "Давление";
             TestTag3.dataType = DataType.INT;
             TestTag3.shuffleBytes = ShuffleBytes.NONE;
             TestTag3.Address = 50;
@@ -45,7 +48,7 @@ namespace ModbusSurvey
 
             SurveyEngine surveyEngine = new SurveyEngine(server);
 
-            surveyEngine.StartSurvey();
+            surveyEngine.PrepareSurvey();
         }
     }
 }
