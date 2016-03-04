@@ -10,28 +10,40 @@ namespace Hanabi
     {
         //Колода карт игрока
         public List<Card> mDeck;
+        //Имя игрока
+        public string mName;
         
-        public Player(List<Card> deck)
+        public Player()
         {
-            mDeck = deck;
+            mDeck = new List<Card>();
+        }
+
+        public Player(string name)
+        {
+            mDeck = new List<Card>();
+            mName = name;
         }
         
-        public void PlayCard()
+        public void PlayCard(GameField gameField, int choosedCard)
+        {
+            if(gameField.tableDeck.Contains(mDeck[choosedCard]) &&
+                (mDeck[choosedCard].mValue == 1))
+            {
+
+            }
+        }
+
+        public void DropCard(GameField gameField)
         {
 
         }
 
-        public void DropCard()
+        public void TellColor(GameField gameField)
         {
 
         }
 
-        public void TellColor()
-        {
-
-        }
-
-        public void TellRank()
+        public void TellRank(GameField gameField)
         {
 
         }

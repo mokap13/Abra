@@ -44,6 +44,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="GameField.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="Output.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />

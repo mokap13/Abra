@@ -8,41 +8,59 @@ namespace Hanabi
 {
     class GameEngine
     {
-        private List<Card> mainDeck;
-        private Player player_A;
-        private Player player_B;S
+        const int START_SIZE_PLAYER_DECK = 5;
+            
         private GameField gameField;
+        //private List<Player> mPlayers;
 
         public GameEngine()
         {
+            gameField = new GameField();
             #region ExampleDeck
-            mainDeck = new List<Card>();
+            gameField.mainDeck = new List<Card>();
 
-            mainDeck.Add(new Card(1, ConsoleColor.Red));
-            mainDeck.Add(new Card(2, ConsoleColor.Green));
-            mainDeck.Add(new Card(3, ConsoleColor.Blue));
-            mainDeck.Add(new Card(4, ConsoleColor.White));
-            mainDeck.Add(new Card(5, ConsoleColor.Yellow));
-            mainDeck.Add(new Card(1, ConsoleColor.Red));
-            mainDeck.Add(new Card(1, ConsoleColor.Red));
-            mainDeck.Add(new Card(1, ConsoleColor.Blue));
-            mainDeck.Add(new Card(2, ConsoleColor.Blue));
-            mainDeck.Add(new Card(1, ConsoleColor.White));
-            mainDeck.Add(new Card(2, ConsoleColor.White));
-            mainDeck.Add(new Card(1, ConsoleColor.White));
+            gameField.mainDeck.Add(new Card(1, ConsoleColor.Red));
+            gameField.mainDeck.Add(new Card(2, ConsoleColor.Green));
+            gameField.mainDeck.Add(new Card(3, ConsoleColor.Blue));
+            gameField.mainDeck.Add(new Card(4, ConsoleColor.White));
+            gameField.mainDeck.Add(new Card(5, ConsoleColor.Yellow));
+            gameField.mainDeck.Add(new Card(1, ConsoleColor.Red));
+            gameField.mainDeck.Add(new Card(1, ConsoleColor.Red));
+            gameField.mainDeck.Add(new Card(1, ConsoleColor.Blue));
+            gameField.mainDeck.Add(new Card(2, ConsoleColor.Blue));
+            gameField.mainDeck.Add(new Card(1, ConsoleColor.White));
+            gameField.mainDeck.Add(new Card(2, ConsoleColor.White));
+            gameField.mainDeck.Add(new Card(1, ConsoleColor.White));
+
+            
             #endregion
-
-            gameField = new GameField(mainDeck);
-
-            player_A = new Player(mainDeck.GetRange(0,5));
-            player_B = new Player(mainDeck.GetRange(5,5));
         }
 
         public void StartGame()
         {
-            Output.ShowDeck(mainDeck);
-            Output.ShowDeck(player_A.mDeck);
-            Output.ShowDeck(player_B.mDeck);
+            //Выводим колоду на экран
+            Output.ShowDeck(gameField.mainDeck);
+            //Инициализируем двух игроков
+            gameField.player_A = new Player();
+            gameField.player_B = new Player();
+            gameField.tableDeck = new List<Card>();
+
+            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
+            {
+                GiveCard(gameField.player_A); 
+            }
+            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
+            {
+                GiveCard(gameField.player_B);
+            }
+
+            Output.ShowStatus(gameField);
+        }
+
+        private void GiveCard(Player player)
+        {
+            player.mDeck.Add(gameField.mainDeck.First<Card>());
+            gameField.mainDeck.Remove(gameField.mainDeck.First<Card>());
         }
     }
 }
