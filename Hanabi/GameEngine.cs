@@ -22,6 +22,18 @@ namespace Hanabi
             #endregion
         }
 
+        public GameField GameField
+        {
+            get
+            {
+                return mGameField;
+            }
+            set
+            {
+                mGameField = value;
+            }
+        }
+
         public void StartGame()
         {
             //Output.ShowDeck(mGameField.mainDeck);
