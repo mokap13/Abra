@@ -7,26 +7,54 @@ namespace Hanabi
 {
     class Card
     {
-        //Имя карты
-        private string name;
-        //Цвет карты
-        public ConsoleColor mColor;
-        //Ценность карты
-        public int mValue;
+        private CardColor mColor;
+        private CardValue mValue;
+        private string mName;
 
-        public Card(int value,ConsoleColor color)
+        public Card(CardColor color,CardValue value,string name)
         {
             mColor = color;
             mValue = value;
-            name = (mColor.ToString()[0] + mValue.ToString());
+            mName = name;
         }
-        //Представление карты на экране
-        public void Show()
+
+        public CardColor Color
         {
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.BackgroundColor = mColor;
-            Console.Write(name);
-            Console.ResetColor();
+            get
+            {
+                return mColor;
+            }
         }
+        public CardValue Value
+        {
+            get
+            {
+                return mValue;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return mName;
+            }
+        }
+
+    }
+    enum CardColor
+    {
+        Red = 'R',
+        Green = 'G',
+        Blue = 'B',
+        Yellow = 'Y',
+        White = 'W'
+    }
+    enum CardValue
+    {
+        One = '1', 
+        Two = '2', 
+        Three = '3', 
+        Four = '4', 
+        Five = '5'
     }
 }

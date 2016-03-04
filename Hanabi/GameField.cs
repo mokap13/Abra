@@ -9,19 +9,24 @@ namespace Hanabi
     class GameField
     {
         public List<Card> mainDeck;
-        public Player player_A;
-        public Player player_B;
         public List<Card> tableDeck;
+        public Player playerA;
+        public Player playerB;
 
-        public int Turn;
-        public int Score;
-        public bool Finished;
+        public int turn;
+        public int score;
+        public bool finished;
         
         public GameField()
         {
-            Turn = 0;
-            Score = 0;
-            Finished = false;
+            turn = 0;
+            score = 0;
+            finished = false;
+
+            playerA = new Player();
+            playerB = new Player();
+            tableDeck = new List<Card>();
+            mainDeck = new List<Card>();
         }
     }
 }

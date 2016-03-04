@@ -9,58 +9,64 @@ namespace Hanabi
     class GameEngine
     {
         const int START_SIZE_PLAYER_DECK = 5;
-            
-        private GameField gameField;
-        //private List<Player> mPlayers;
+        
+        private GameField mGameField;
 
         public GameEngine()
         {
-            gameField = new GameField();
+            mGameField = new GameField();
             #region ExampleDeck
-            gameField.mainDeck = new List<Card>();
+            mGameField.mainDeck = new List<Card>();
 
-            gameField.mainDeck.Add(new Card(1, ConsoleColor.Red));
-            gameField.mainDeck.Add(new Card(2, ConsoleColor.Green));
-            gameField.mainDeck.Add(new Card(3, ConsoleColor.Blue));
-            gameField.mainDeck.Add(new Card(4, ConsoleColor.White));
-            gameField.mainDeck.Add(new Card(5, ConsoleColor.Yellow));
-            gameField.mainDeck.Add(new Card(1, ConsoleColor.Red));
-            gameField.mainDeck.Add(new Card(1, ConsoleColor.Red));
-            gameField.mainDeck.Add(new Card(1, ConsoleColor.Blue));
-            gameField.mainDeck.Add(new Card(2, ConsoleColor.Blue));
-            gameField.mainDeck.Add(new Card(1, ConsoleColor.White));
-            gameField.mainDeck.Add(new Card(2, ConsoleColor.White));
-            gameField.mainDeck.Add(new Card(1, ConsoleColor.White));
-
-            
+            mGameField.mainDeck = Input.CreateMainDeck(mGameField);
             #endregion
         }
 
         public void StartGame()
         {
-            //Выводим колоду на экран
-            Output.ShowDeck(gameField.mainDeck);
-            //Инициализируем двух игроков
-            gameField.player_A = new Player();
-            gameField.player_B = new Player();
-            gameField.tableDeck = new List<Card>();
-
+            //Output.ShowDeck(mGameField.mainDeck);
+           
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCard(gameField.player_A); 
+                GiveCard(mGameField.playerA); 
             }
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCard(gameField.player_B);
+                GiveCard(mGameField.playerB);
             }
 
-            Output.ShowStatus(gameField);
+            Output.ShowStatus(mGameField);
         }
 
         private void GiveCard(Player player)
         {
-            player.mDeck.Add(gameField.mainDeck.First<Card>());
-            gameField.mainDeck.Remove(gameField.mainDeck.First<Card>());
+            player.Deck.Add(mGameField.mainDeck.First<Card>());
+            mGameField.mainDeck.Remove(mGameField.mainDeck.First<Card>());
+        }
+
+        //private void EndStep()
+        //{
+        //    //Передаем ход следующему игроку
+        //    bool isCurrentPlayerA = mGameField.playerA.isCurrent;
+            
+        //    if (isCurrentPlayerA == true)
+        //    {
+        //        mGameField.playerB.isCurrent = true;
+        //        mGameField.playerA.isCurrent = false;
+        //    }
+        //    else
+        //    {
+        //        mGameField.playerB.isCurrent = false;
+        //        mGameField.playerA.isCurrent = true;
+        //    }
+        //    //Увеличиваем счетчик ходов
+        //    mGameField.turn++;
+
+        //}
+
+        private void UseCard()
+        {
+
         }
     }
 }

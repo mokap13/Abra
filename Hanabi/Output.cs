@@ -12,25 +12,22 @@ namespace Hanabi
         {
             foreach (var card in deck)
             {
-                card.Show();
+                System.Console.Write(card.Name); 
                 Console.Write(" ");
             }
             Console.Write("\n");
         }
-        public static void ShowPlayer(Player player)
-        {
-            Console.WriteLine("***" + player.mName + "***");
-        }
+        
         public static void ShowStatus(GameField gameField)
         {
-            const int EMPTY_SPACE = 15;
-            int Turn = gameField.Turn;
-            int Score = gameField.Score;
-            bool Finished = gameField.Finished;
+            const int EMPTY_SPACE = 18;
+            int Turn = gameField.turn;
+            int Score = gameField.score;
+            bool Finished = gameField.finished;
 
             List<Card> tableDeck = gameField.tableDeck;
-            List<Card> currentPlayer = gameField.player_A.mDeck;
-            List<Card> nextPlayer = gameField.player_B.mDeck;
+            List<Card> currentPlayer = gameField.playerA.Deck;
+            List<Card> nextPlayer = gameField.playerB.Deck;
 
             string namePosition;
 
