@@ -12,41 +12,35 @@ namespace Hanabi
         {
             foreach (var card in deck)
             {
-                System.Console.Write(card.Name); 
-                Console.Write(" ");
+                System.Console.Write(card.Name + " "); 
             }
             Console.Write("\n");
         }
-        
-        public static void ShowStatus(GameField gameField)
+
+        public static void ShowDeck(List<Card> deck, string name)
         {
-            const int EMPTY_SPACE = 18;
-            int Turn = gameField.turn;
-            int Score = gameField.score;
-            bool Finished = gameField.finished;
+            Console.Write("{0,18}", name);
+            foreach (var card in deck)
+            {
+                Console.Write(card.Name + " ");
+            }
+            Console.Write("\n");
+        }
 
-            List<Card> tableDeck = gameField.tableDeck;
-            List<Card> currentPlayer = gameField.playerA.Deck;
-            List<Card> nextPlayer = gameField.playerB.Deck;
+        public static void ShowGameStatus(GameField gameField)
+        {
+            int turn = gameField.turn;
+            int score = gameField.score;
+            bool finished = gameField.finished;
 
-            string namePosition;
+            Player currentPlayer = gameField.currentPlayer;
+            Player nextPlayer = gameField.nextPlayer;
 
-            Console.WriteLine("Turn: {0}, Score: {1}, Finished: {2}", Turn, Score, Finished);
+            Console.WriteLine("turn: {0}, score: {1}, finished: {2}", turn, score, finished);
 
-            namePosition = "Current player: ";
-            Console.CursorLeft = EMPTY_SPACE - namePosition.Length;
-            Console.Write(namePosition);
-            ShowDeck(currentPlayer);
-
-            namePosition = "Next player: ";
-            Console.CursorLeft = EMPTY_SPACE - namePosition.Length;
-            Console.Write(namePosition);
-            ShowDeck(nextPlayer);
-
-            namePosition = "Table: ";
-            Console.CursorLeft = EMPTY_SPACE - namePosition.Length;
-            Console.Write(namePosition);
-            ShowDeck(tableDeck);
+            ShowDeck(currentPlayer.Deck, "Current player: ");
+            ShowDeck(nextPlayer.Deck, "Next player: ");
+            ShowDeck(gameField.tableDeck, "Table: ");
         }
     }
 }

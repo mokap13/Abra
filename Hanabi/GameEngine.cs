@@ -12,42 +12,38 @@ namespace Hanabi
         
         private GameField mGameField;
 
+        private Player mPlayerA;
+        private Player mPlayerB;
+
         public GameEngine()
         {
+            mPlayerA = new Player();
+            mPlayerB = new Player();
+
             mGameField = new GameField();
-            #region ExampleDeck
+
+            mGameField.currentPlayer = mPlayerA;
+            mGameField.nextPlayer = mPlayerB;
             mGameField.mainDeck = new List<Card>();
 
             mGameField.mainDeck = Input.ReadMainDeck(mGameField);
-            #endregion
-        }
-
-        public GameField GameField
-        {
-            get
-            {
-                return mGameField;
-            }
-            set
-            {
-                mGameField = value;
-            }
         }
 
         public void StartGame()
         {
-            //Output.ShowDeck(mGameField.mainDeck);
-           
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCard(mGameField.playerA); 
+                GiveCard(mPlayerA); 
             }
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCard(mGameField.playerB);
+                GiveCard(mPlayerB);
             }
 
-            Output.ShowStatus(mGameField);
+            Output.ShowGameStatus(mGameField);
+
+            Console.ReadLine();
+            Input.ReadCommand(mGameField);
         }
 
         private void GiveCard(Player player)
@@ -59,17 +55,17 @@ namespace Hanabi
         //private void EndStep()
         //{
         //    //Передаем ход следующему игроку
-        //    bool isCurrentPlayerA = mGameField.playerA.isCurrent;
+        //    bool isCurrentPlayerA = mGameField.mPlayerA.isCurrent;
             
         //    if (isCurrentPlayerA == true)
         //    {
-        //        mGameField.playerB.isCurrent = true;
-        //        mGameField.playerA.isCurrent = false;
+        //        mGameField.mPlayerB.isCurrent = true;
+        //        mGameField.mPlayerA.isCurrent = false;
         //    }
         //    else
         //    {
-        //        mGameField.playerB.isCurrent = false;
-        //        mGameField.playerA.isCurrent = true;
+        //        mGameField.mPlayerB.isCurrent = false;
+        //        mGameField.mPlayerA.isCurrent = true;
         //    }
         //    //Увеличиваем счетчик ходов
         //    mGameField.turn++;

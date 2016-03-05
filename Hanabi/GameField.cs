@@ -10,8 +10,8 @@ namespace Hanabi
     {
         public List<Card> mainDeck;
         public List<Card> tableDeck;
-        public Player playerA;
-        public Player playerB;
+        public Player currentPlayer;
+        public Player nextPlayer;
 
         public int turn;
         public int score;
@@ -22,9 +22,7 @@ namespace Hanabi
             turn = 0;
             score = 0;
             finished = false;
-
-            playerA = new Player();
-            playerB = new Player();
+            
             tableDeck = new List<Card>();
             mainDeck = new List<Card>();
         }
