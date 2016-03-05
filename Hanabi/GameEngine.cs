@@ -18,7 +18,7 @@ namespace Hanabi
             #region ExampleDeck
             mGameField.mainDeck = new List<Card>();
 
-            mGameField.mainDeck = Input.CreateMainDeck(mGameField);
+            mGameField.mainDeck = Input.ReadMainDeck(mGameField);
             #endregion
         }
 
