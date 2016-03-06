@@ -8,14 +8,21 @@ namespace Hanabi
     class Card
     {
         private CardColor mColor;
-        private CardValue mValue;
+        private CardRank mRank;
         private string mName;
 
-        public Card(CardColor color,CardValue value,string name)
+        public Card(CardColor color,CardRank rank,string name)
         {
             mColor = color;
-            mValue = value;
+            mRank = rank;
             mName = name;
+        }
+
+        public Card(char color, char rank)
+        {
+            mColor = (CardColor)color;
+            mRank = (CardRank)rank;
+            mName = String.Concat(color, rank);
         }
 
         public CardColor Color
@@ -25,11 +32,11 @@ namespace Hanabi
                 return mColor;
             }
         }
-        public CardValue Value
+        public CardRank Rank
         {
             get
             {
-                return mValue;
+                return mRank;
             }
         }
         public string Name
@@ -39,7 +46,6 @@ namespace Hanabi
                 return mName;
             }
         }
-
     }
     enum CardColor
     {
@@ -49,7 +55,7 @@ namespace Hanabi
         Yellow = 'Y',
         White = 'W'
     }
-    enum CardValue
+    enum CardRank
     {
         Zero = '0',
         One = '1', 

@@ -42,7 +42,6 @@ namespace Hanabi
 
             Output.ShowGameStatus(mGameField);
 
-            Console.ReadLine();
             Input.ReadCommand(mGameField);
         }
 
@@ -71,10 +70,5 @@ namespace Hanabi
         //    mGameField.turn++;
 
         //}
-
-        private void UseCard()
-        {
-
-        }
     }
 }
