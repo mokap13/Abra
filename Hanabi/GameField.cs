@@ -12,6 +12,7 @@ namespace Hanabi
         public List<Card> tableDeck;
         public Player currentPlayer;
         public Player nextPlayer;
+        public Command currentCommand;
 
         public int turn;
         public int score;

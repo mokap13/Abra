@@ -8,6 +8,9 @@ namespace Hanabi
 {
     static class Input
     {
+        private static string[] cardColors = new string[] { "Red", "Green", "Blue", "Yellow", "White" };
+        private static string[] cardRanks = new string[] { "1", "2", "3", "4", "5" };
+
         public static List<Card> ReadMainDeck(GameField gameField)
         {
             List<Card> mainDeck = gameField.mainDeck;
@@ -55,57 +58,31 @@ namespace Hanabi
         {
             Console.Write(">");
             Player player = gameField.currentPlayer;
+            Command command;
+
             string sourceData = "Tell color Red for cards 1 2 3 4";//Console.ReadLine();
+            string[] splitData = sourceData.Split(' ');
 
-            //Набор возможных команд и значений
-            string[] statementTypes = new string[]{
-                "Start new game with deck",
-                "Play card",
-                "Drop card",
-                "Tell color",
-                "Red","Green","Blue","Yellow","White",
-                "Tell rank",
-                "1","2","3","4","5",
-            };
+            string commandName;
+            int choosedCard;
+            int[] choosedCards = new int[5];
+            CardColor? cardColor;
+            CardRank? cardRank;
 
-            string[] statements = new string[30];
-            int[] statementIndexes = new int[5];
-            
+            commandName = splitData[0];
+            int.TryParse(splitData[2], out choosedCard);
+            cardColor = DetermineColor(splitData[2]);
+            cardRank = DetermineRank(splitData[2]);
 
-            for (int i = 0; i < statements.Length; i++)
-            {
-                statements[i] = RemoveString(ref sourceData, statementTypes);
-                if (statements[i] == null)
-                    break;
-            }
+            if (splitData[3] + splitData[4] == "forcards")
+                for (int j = 0; j < splitData.Length - 5; j++)
+                {
+                    choosedCards[j] = int.Parse(splitData[j + 5]);
+                }
 
-            for (int i = 2; true; i++)
-            {
-                if (statements[i] == null)
-                    break;
-                statementIndexes[i - 2] = int.Parse(statements[i]);
-            }
-
-            if (statements[0] == "Play card")
-            {
-                int choosedCard = int.Parse(statements[1]);
-                player.PlayCard(gameField, choosedCard);
-            }
-            if (statements[0] == "Drop card")
-            {
-                int choosedCard = int.Parse(statements[1]);
-                player.DropCard(gameField, choosedCard);
-            }
-            if (statements[0] == "Tell color")
-            {
-                CardColor cardColor = DetermineColor(statements[1]);
-                player.TellColor(gameField, cardColor, statementIndexes);
-            }
-            if (statements[0] == "Tell rank")
-            {
-                CardRank cardRank = DetermineRank(statements[1]);
-                player.TellRank(gameField, cardRank, statementIndexes);
-            }
+            command = new Command(commandName,choosedCard,choosedCards,cardColor,cardRank);
+            gameField.currentCommand = command;
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -133,13 +110,14 @@ namespace Hanabi
         /// <summary>
         /// Приводит тип string к CardColor
         /// </summary>
-        /// <param name="colorName">Представление цвета карты(string)</param>
+        /// <param name="rankName">Представление цвета карты(string)</param>
         /// <returns>Представление цвета карты(CardColor)</returns>
-        public static CardColor DetermineColor(string colorName)
+        public static CardColor? DetermineColor(string rankName)
         {
+            if (cardColors.Contains(rankName) == false)
+                return null;
             const int FIRST_CHAR_COLOR = 0;
-
-            CardColor color = (CardColor)colorName[FIRST_CHAR_COLOR];
+            CardColor color = (CardColor)rankName[FIRST_CHAR_COLOR];
             return color;
         }
         /// <summary>
@@ -147,14 +125,23 @@ namespace Hanabi
         /// </summary>
         /// <param name="rankName">Представление ценности карты(string)</param>
         /// <returns>Представление ценности карты(CardRank)</returns>
-        public static CardRank DetermineRank(string rankName)
+        public static CardRank? DetermineRank(string rankName)
         {
+            if (cardRanks.Contains(rankName) == false)
+                return null;
             const int FIRST_CHAR_RANK = 0;
-
             CardRank rank = (CardRank)rankName[FIRST_CHAR_RANK];
             return rank;
         }
 
-        
+        public static int GetIndex(string[] sourceText, string text)
+        {
+            for (int i = 0; i < sourceText.Length; i++)
+            {
+                if (sourceText[i] == text)
+                    return i;
+            }
+            return -1;
+        }
     }
 }
