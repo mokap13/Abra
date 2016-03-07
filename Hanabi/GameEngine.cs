@@ -9,46 +9,53 @@ namespace Hanabi
     class GameEngine
     {
         const int START_SIZE_PLAYER_DECK = 5;
-        
+        private Command mCommand;
         private GameField mGameField;
-
         private Player mPlayerA;
         private Player mPlayerB;
+        private Deck mMainDeck;
+        private Deck mTableDeck;
 
         public GameEngine()
         {
-            mPlayerA = new Player();
-            mPlayerB = new Player();
-
             mGameField = new GameField();
 
+            mPlayerA = new Player();
+            mPlayerB = new Player();
             mGameField.currentPlayer = mPlayerA;
             mGameField.nextPlayer = mPlayerB;
-            mGameField.mainDeck = new List<Card>();
 
-            mGameField.mainDeck = Input.ReadMainDeck(mGameField);
+            mMainDeck = mGameField.mainDeck;
+            mTableDeck = mGameField.tableDeck;
+
+            mGameField.UpdateDecksName();
         }
 
         public void StartGame()
         {
+            mGameField.mainDeck = Input.ReadMainDeck(mGameField);
+
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCard(mPlayerA); 
+                GiveCard(mPlayerA,mMainDeck); 
             }
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCard(mPlayerB);
+                GiveCard(mPlayerB,mMainDeck);
             }
 
             Output.ShowGameStatus(mGameField);
 
-            Input.ReadCommand(mGameField);
+            mCommand = Input.ReadCommand();
+
+            CheckCommand(mCommand, mGameField);
+            Console.WriteLine();
         }
 
-        private void GiveCard(Player player)
+        private void GiveCard(Player player,Deck sourceDeck)
         {
-            player.Deck.Add(mGameField.mainDeck.First<Card>());
-            mGameField.mainDeck.Remove(mGameField.mainDeck.First<Card>());
+            Card pullCard = mGameField.mainDeck.PullTopCard(sourceDeck);
+            player.Deck.Cards.Add(pullCard);
         }
 
         //private void EndStep()
@@ -70,5 +77,23 @@ namespace Hanabi
         //    mGameField.turn++;
 
         //}
+
+        private bool? CheckCommand(Command command,GameField gamefield)
+        {
+            switch (command.CommandName)
+            {
+                case CommandName.Playcard:
+                    break;
+                case CommandName.Dropcard:
+                    break;
+                case CommandName.Tellcolor:
+                    break;
+                case CommandName.Tellrank:
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
     }
 }

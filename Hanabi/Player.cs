@@ -8,14 +8,14 @@ namespace Hanabi
 {
     class Player
     {
-        private List<Card> mDeck;
+        private Deck mDeck;
 
         public Player()
         {
-            mDeck = new List<Card>();
+            mDeck = new Deck();
         }
 
-        public List<Card> Deck
+        public Deck Deck
         {
             get
             {
@@ -23,20 +23,14 @@ namespace Hanabi
             }
         }
 
-        public void ExecuteCommand(GameField gamefield, Command command)
-        {
-
-        }
-
         private void PlayCard(GameField gameField, int choosedCard)
         {
-            gameField.tableDeck.Add(mDeck[choosedCard]);
-            mDeck.RemoveAt(choosedCard);
+            
         }
 
         private void DropCard(GameField gameField, int choosedCard)
         {
-            mDeck.RemoveAt(choosedCard);
+            
         }
 
         private void TellColor(GameField gameField, CardColor cardColor, int[] choosedCards)

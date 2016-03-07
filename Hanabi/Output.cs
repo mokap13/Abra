@@ -8,27 +8,24 @@ namespace Hanabi
 {
     static class Output
     {
-        public static void ShowDeck(List<Card> deck)
+        /// <summary>
+        /// Выводит в консоль последовательно имена карт, через заданный разделитель
+        /// </summary>
+        /// <param name="deck">Колода карт</param>
+        /// <param name="delimiter">Разделитель</param>
+        public static void ShowDeck(Deck deck, char delimiter)
         {
-            foreach (var card in deck)
+            Console.Write("{0,18}", deck.Name);
+            foreach (var card in deck.Cards)
             {
-                System.Console.Write(card.Name + " "); 
-            }
-            Console.Write("\n");
-        }
-
-        public static void ShowDeck(List<Card> deck, string name)
-        {
-            Console.Write("{0,18}", name);
-            foreach (var card in deck)
-            {
-                Console.Write(card.Name + " ");
+                System.Console.Write(card.Name + delimiter);
             }
             Console.Write("\n");
         }
 
         public static void ShowGameStatus(GameField gameField)
         {
+            const char DELIMITER = ' ';
             int turn = gameField.turn;
             int score = gameField.score;
             bool finished = gameField.finished;
@@ -38,9 +35,9 @@ namespace Hanabi
 
             Console.WriteLine("turn: {0}, score: {1}, finished: {2}", turn, score, finished);
 
-            ShowDeck(currentPlayer.Deck, "Current player: ");
-            ShowDeck(nextPlayer.Deck, "Next player: ");
-            ShowDeck(gameField.tableDeck, "Table: ");
+            ShowDeck(currentPlayer.Deck,DELIMITER);
+            ShowDeck(nextPlayer.Deck,DELIMITER);
+            ShowDeck(gameField.tableDeck, DELIMITER);
         }
     }
 }

@@ -10,15 +10,15 @@ namespace Hanabi
     {
         private static string[] cardColors = new string[] { "Red", "Green", "Blue", "Yellow", "White" };
         private static string[] cardRanks = new string[] { "1", "2", "3", "4", "5" };
+        private static string[] commands = {"Start", "new", "game", "with", "deck","Dropcard","Playcard","Tellcolor","Tellrank"};
 
-        public static List<Card> ReadMainDeck(GameField gameField)
+        public static Deck ReadMainDeck(GameField gameField)
         {
-            List<Card> mainDeck = gameField.mainDeck;
+            Deck mainDeck = gameField.mainDeck;
 
             const int CARD_COLOR_SOCKET = 0;
             const int CARD_VALUE_SOCKET = 1;
 
-            string inputCommand = null;
             string inputData = null;
             string[] inputDataArray = null;
 
@@ -35,15 +35,16 @@ namespace Hanabi
 
                 if (inputData.Contains("Start new game with deck "))
                 {
-
                     //Преобразуем входную строку в массив, используя 'Space' как разделитель
                     inputDataArray = inputData.Split(' ');
+
                     foreach (string data in inputDataArray)
                     {
+                        if (commands.Contains(data))
+                            continue;
                         Card card = new Card(data[CARD_COLOR_SOCKET], data[CARD_VALUE_SOCKET]);
-                        mainDeck.Add(card);
+                        mainDeck.Cards.Add(card);
                     }
-
                     return mainDeck;
                 }
                 else
@@ -54,35 +55,48 @@ namespace Hanabi
             }
         }
 
-        public static void ReadCommand(GameField gameField)
+        public static Command ReadCommand()
         {
             Console.Write(">");
-            Player player = gameField.currentPlayer;
             Command command;
 
             string sourceData = "Tell color Red for cards 1 2 3 4";//Console.ReadLine();
             string[] splitData = sourceData.Split(' ');
 
-            string commandName;
-            int choosedCard;
+            int choosedCard = 0;
             int[] choosedCards = new int[5];
             CardColor? cardColor;
             CardRank? cardRank;
+            CommandName? commandName;
+            
+            commandName = DetermineCommandName(splitData[0]+splitData[1]);
+            if (commandName == null)
+            {
+                Console.WriteLine("command is not existing");
+                Console.ReadLine();
+                return null;
+            }
 
-            commandName = splitData[0];
-            int.TryParse(splitData[2], out choosedCard);
+            if (splitData[0] == "Play" || splitData[0] == "Drop")
+            {
+                choosedCard = int.Parse(splitData[2]);
+                command = new Command(commandName,choosedCard);
+                return command;
+            }
+
             cardColor = DetermineColor(splitData[2]);
             cardRank = DetermineRank(splitData[2]);
 
-            if (splitData[3] + splitData[4] == "forcards")
+            int indexStartChoosedCards = GetIndex(splitData, "cards");
+
+            if (splitData[3] == "for" && splitData[4] == "cards")
                 for (int j = 0; j < splitData.Length - 5; j++)
                 {
                     choosedCards[j] = int.Parse(splitData[j + 5]);
                 }
 
             command = new Command(commandName,choosedCard,choosedCards,cardColor,cardRank);
-            gameField.currentCommand = command;
-            Console.WriteLine();
+            return command;
         }
 
         /// <summary>
@@ -92,7 +106,7 @@ namespace Hanabi
         /// <param name="statementsArray">Массив искомых подстрок</param>
         /// <returns>Первая найденая строка, значение которой 
         /// соответсвует значению одной из строк массива statementsArray</returns>
-        public static string RemoveString(ref string text, string[] statementsArray)
+        private static string RemoveString(ref string text, string[] statementsArray)
         {
             for (int i = 0; i < statementsArray.Length; i++)
             {
@@ -110,31 +124,31 @@ namespace Hanabi
         /// <summary>
         /// Приводит тип string к CardColor
         /// </summary>
-        /// <param name="rankName">Представление цвета карты(string)</param>
+        /// <param name="sourceName">Представление цвета карты(string)</param>
         /// <returns>Представление цвета карты(CardColor)</returns>
-        public static CardColor? DetermineColor(string rankName)
+        private static CardColor? DetermineColor(string sourceName)
         {
-            if (cardColors.Contains(rankName) == false)
+            if (cardColors.Contains(sourceName) == false)
                 return null;
             const int FIRST_CHAR_COLOR = 0;
-            CardColor color = (CardColor)rankName[FIRST_CHAR_COLOR];
+            CardColor color = (CardColor)sourceName[FIRST_CHAR_COLOR];
             return color;
         }
         /// <summary>
         /// Приводит тип string к CardRank
         /// </summary>
-        /// <param name="rankName">Представление ценности карты(string)</param>
+        /// <param name="sourceName">Представление ценности карты(string)</param>
         /// <returns>Представление ценности карты(CardRank)</returns>
-        public static CardRank? DetermineRank(string rankName)
+        private static CardRank? DetermineRank(string sourceName)
         {
-            if (cardRanks.Contains(rankName) == false)
+            if (cardRanks.Contains(sourceName) == false)
                 return null;
             const int FIRST_CHAR_RANK = 0;
-            CardRank rank = (CardRank)rankName[FIRST_CHAR_RANK];
+            CardRank rank = (CardRank)sourceName[FIRST_CHAR_RANK];
             return rank;
         }
 
-        public static int GetIndex(string[] sourceText, string text)
+        private static int GetIndex(string[] sourceText, string text)
         {
             for (int i = 0; i < sourceText.Length; i++)
             {
@@ -142,6 +156,15 @@ namespace Hanabi
                     return i;
             }
             return -1;
+        }
+
+        private static CommandName? DetermineCommandName(string sourceName)
+        {
+            if (commands.Contains(sourceName) == false)
+                return null;
+            
+            CommandName commandName = (CommandName)Enum.Parse(typeof(CommandName), sourceName);
+            return commandName;
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Hanabi
 {
     class GameField
     {
-        public List<Card> mainDeck;
-        public List<Card> tableDeck;
+        public Deck mainDeck;
+        public Deck tableDeck;
+
         public Player currentPlayer;
         public Player nextPlayer;
-        public Command currentCommand;
 
         public int turn;
         public int score;
@@ -23,9 +23,19 @@ namespace Hanabi
             turn = 0;
             score = 0;
             finished = false;
-            
-            tableDeck = new List<Card>();
-            mainDeck = new List<Card>();
+
+            mainDeck = new Deck();
+            tableDeck = new Deck();
+            tableDeck.Name = "Table: ";
         }
+
+        /// <summary>
+        /// Обновляет статусы игроков
+        /// </summary>
+        public void UpdateDecksName()
+        {
+            currentPlayer.Deck.Name = "Current player: ";
+            nextPlayer.Deck.Name = "Next player: ";
+        } 
     }
 }
