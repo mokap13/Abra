@@ -114,7 +114,7 @@ namespace Hanabi
                     int numberCardsOneRank = gameField.nextPlayer.Deck.GetNumberRank(command.CardRank);
                     if (numberCardsOneRank != command.ChoosedCards.Length)
                         return false;
-                    if(gameField.nextPlayer.Deck.ChekRank(command.CardRank, command.ChoosedCards) == false)
+                    if(gameField.nextPlayer.Deck.CheсkRank(command.CardRank, command.ChoosedCards) == false)
                         return false;
                     return true;
                 default:
