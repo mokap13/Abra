@@ -78,7 +78,7 @@ namespace Hanabi
             const int INDEX_CHOOSED_CARDS = 5;
             //Ввод данных из консоли
             Console.Write(">");
-            string sourceData = "Play card 3";//"Tell color Red for cards 1 2 3 4";//Console.ReadLine();
+            string sourceData = Console.ReadLine();//"Tell color Red for cards 1 2 3 4";//Console.ReadLine();
             string[] splitData = sourceData.Split(DELIMITER);
             
             //Параметры команды
@@ -86,7 +86,7 @@ namespace Hanabi
             int choosedCard = 0;
             int[] choosedCards = new int[5];
             CardColor? cardColor = null;
-            CardRank? cardRank = null;
+            int? cardRank = null;
             CommandName? commandName = null;
             
             commandName = DefineCommandName(splitData[0] + splitData[1]);
@@ -157,12 +157,12 @@ namespace Hanabi
         /// </summary>
         /// <param name="sourceName">Представление ценности карты(string)</param>
         /// <returns>Представление ценности карты(CardRank)</returns>
-        private static CardRank? DefineRank(string sourceName)
+        private static int? DefineRank(string sourceName)
         {
             if (cardRanks.Contains(sourceName) == false)
                 return null;
             const int FIRST_CHAR_RANK = 0;
-            CardRank rank = (CardRank)sourceName[FIRST_CHAR_RANK];
+            int rank = (int)Char.GetNumericValue(sourceName[FIRST_CHAR_RANK]);
             return rank;
         }
 

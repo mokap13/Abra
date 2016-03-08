@@ -11,7 +11,7 @@ namespace Hanabi
         private CommandName? mCommandName;
         private int[] mChoosedCards;
         private CardColor? mCardColor;
-        private CardRank? mCardRank;
+        private int? mCardRank;
 
         public Command(CommandName? commandName)
         {
@@ -25,14 +25,14 @@ namespace Hanabi
             mChoosedCards = choosedCards;
         }
 
-        public Command(CommandName? commandName, int[] choosedCards, CardRank? rank)
+        public Command(CommandName? commandName, int[] choosedCards, int? rank)
         {
             mCommandName = commandName;
             mCardRank = rank;
             mChoosedCards = choosedCards;
         }
 
-        public Command(CommandName? commandName, int[] choosedCards, CardColor? color, CardRank? rank)
+        public Command(CommandName? commandName, int[] choosedCards, CardColor? color, int? rank)
         {
             mCommandName = commandName;
             mChoosedCards = choosedCards;
@@ -68,7 +68,7 @@ namespace Hanabi
         /// <summary>
         /// Ранг карты
         /// </summary>
-        public CardRank? CardRank
+        public int? CardRank
         {
             get
             {

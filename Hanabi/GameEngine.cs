@@ -24,70 +24,81 @@ namespace Hanabi
             mPlayerB = new Player();
             mGameField.currentPlayer = mPlayerA;
             mGameField.nextPlayer = mPlayerB;
-
             mMainDeck = mGameField.mainDeck;
             mTableDeck = mGameField.tableDeck;
 
-            mGameField.UpdateDecksName();
+            mGameField.UpdatePlayerStatus();
         }
 
         public void StartGame()
         {
             mGameField.mainDeck = Input.ReadMainDeck(mGameField);
 
+            #region Выдача по 5 карт каждому игроку
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCard(mPlayerA,mMainDeck); 
+                GiveCardFromMainDeck(mPlayerA);
             }
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCard(mPlayerB,mMainDeck);
+                GiveCardFromMainDeck(mPlayerB);
             }
+            #endregion
 
             Output.ShowGameStatus(mGameField);
 
-            mCommand = Input.ReadCommand();
+            while (true)
+            {
+                mCommand = Input.ReadCommand();
 
-            CheckCommand(mCommand, mGameField);
+                if (TryExecuteCommand(mGameField, mCommand) == true)
+                {
+                    MakeMove(mGameField);
+                }
+                else
+                {
+                    mGameField.finished = true;
+                }
+                Output.ShowGameStatus(mGameField);
+            }
+
             Console.WriteLine();
         }
-
-        private void GiveCard(Player player,Deck sourceDeck)
+        /// <summary>
+        /// Выдать игроку карту из основной колоды
+        /// </summary>
+        /// <param name="player">Игрок</param>
+        private void GiveCardFromMainDeck(Player player)
         {
-            Card pullCard = mGameField.mainDeck.PullTopCard(sourceDeck);
+            Card pullCard = mGameField.mainDeck.PullTopCard();
             player.Deck.Cards.Add(pullCard);
         }
-
-        //private void EndStep()
-        //{
-        //    //Передаем ход следующему игроку
-        //    bool isCurrentPlayerA = mGameField.mPlayerA.isCurrent;
-            
-        //    if (isCurrentPlayerA == true)
-        //    {
-        //        mGameField.mPlayerB.isCurrent = true;
-        //        mGameField.mPlayerA.isCurrent = false;
-        //    }
-        //    else
-        //    {
-        //        mGameField.mPlayerB.isCurrent = false;
-        //        mGameField.mPlayerA.isCurrent = true;
-        //    }
-        //    //Увеличиваем счетчик ходов
-        //    mGameField.turn++;
-
-        //}
-
-        private bool? CheckCommand(Command command,GameField gamefield)
+        /// <summary>
+        /// Возвращает true, если действие игрока не нарушает правил игры и 
+        /// false если при выполнении правила нарушаются
+        /// </summary>
+        /// <param name="gameField"></param>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        private bool TryExecuteCommand(GameField gameField, Command command)
         {
             switch (command.CommandName)
             {
                 case CommandName.Playcard:
-                    Card choosedCard = gamefield.currentPlayer.Deck.Cards[command.ChoosedCards[0] - 1];
-                    if ((int)choosedCard.Rank <= gamefield.tableDeck.GetMaxRank(choosedCard.Color));
+                    Card choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
+                    //Ранг выбранной карты должен быть на 1 выше ранга карты колоды стола
+                    if ((int)choosedCard.Rank - 1 == gameField.tableDeck.GetMaxRank(choosedCard.Color))
+                    {
+                        gameField.currentPlayer.PlayCard(gameField, command);
+                        GiveCardFromMainDeck(gameField.currentPlayer);
+                        return true;
+                    }
+                    else
+                    {
                         return false;
-                    break;
+                    }
                 case CommandName.Dropcard:
+
                     break;
                 case CommandName.Tellcolor:
                     break;
@@ -97,6 +108,15 @@ namespace Hanabi
                     break;
             }
             return false;
+        }
+
+        private void MakeMove(GameField gameField)
+        {
+            gameField.turn++;
+            Player tempPlayer = gameField.currentPlayer;
+            gameField.currentPlayer = gameField.nextPlayer;
+            gameField.nextPlayer = tempPlayer;
+            gameField.UpdatePlayerStatus();
         }
     }
 }

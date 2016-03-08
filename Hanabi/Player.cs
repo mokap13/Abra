@@ -23,22 +23,23 @@ namespace Hanabi
             }
         }
 
-        private void PlayCard(GameField gameField, int choosedCard)
+        public void PlayCard(GameField gameField, Command command)
+        {
+            Card pullCard = gameField.currentPlayer.Deck.PullIndexCard(command.ChoosedCards[0]);
+            gameField.tableDeck.PushCardForColor(pullCard);
+        }
+
+        public void DropCard(GameField gameField, Command command)
         {
             
         }
 
-        private void DropCard(GameField gameField, int choosedCard)
-        {
-            
-        }
-
-        private void TellColor(GameField gameField, CardColor cardColor, int[] choosedCards)
+        public void TellColor(GameField gameField, Command command)
         {
             Console.WriteLine();
         }
 
-        private void TellRank(GameField gameField, CardRank cardValue, int[] choosedCards)
+        public void TellRank(GameField gameField, Command command)
         {
             Console.WriteLine();
         }
