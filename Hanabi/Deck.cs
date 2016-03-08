@@ -174,5 +174,13 @@ namespace Hanabi
             }
             return count;
         }
+
+        public int Count
+        {
+            get
+            {
+                return mCards.Count;
+            }
+        }
     }
 }

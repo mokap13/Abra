@@ -12,10 +12,12 @@ namespace Hanabi
         private int[] mChoosedCards;
         private CardColor? mCardColor;
         private int? mCardRank;
+        private Deck mDeck;
 
-        public Command(CommandName? commandName)
+        public Command(CommandName? commandName, Deck deck)
         {
             mCommandName = commandName;
+            mDeck = deck;
         }
 
         public Command(CommandName? commandName, int[] choosedCards, CardColor? color)
@@ -75,6 +77,18 @@ namespace Hanabi
                 return mCardRank;
             }
         }
+
+        public Deck Deck
+        {
+            get
+            {
+                return Deck;
+            }
+            set
+            {
+                Deck = value;
+            }
+        }
     }
     /// <summary>
     /// Имя команды
@@ -84,6 +98,7 @@ namespace Hanabi
         Playcard,
         Dropcard,
         Tellcolor,
-        Tellrank
+        Tellrank,
+        Startnew
     }
 }
