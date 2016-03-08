@@ -10,22 +10,26 @@ namespace Hanabi
     {
         public Deck mainDeck;
         public Deck tableDeck;
+        public Deck garbageDeck;
 
         public Player currentPlayer;
         public Player nextPlayer;
 
         public int turn;
         public int score;
+        public int risk;
         public bool finished;
 
         public GameField()
         {
             turn = 0;
             score = 0;
+            risk = 0;
             finished = false;
 
             mainDeck = new Deck();
             tableDeck = new Deck();
+            garbageDeck = new Deck();
             tableDeck.Cards.Add(new Card('R', '0'));
             tableDeck.Cards.Add(new Card('G', '0'));
             tableDeck.Cards.Add(new Card('B', '0'));

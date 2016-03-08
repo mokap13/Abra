@@ -123,7 +123,7 @@ namespace Hanabi
             const int INDEX_CHOOSED_CARDS = 5;
             //Ввод данных из консоли
             Console.Write(">");
-            string sourceData = "Tell rank 1 for cards 0 1";//"Tell color Red for cards 1 2 3 4";//Console.ReadLine();
+            string sourceData = Console.ReadLine();//"Tell color Red for cards 1 2 3 4";//Console.ReadLine();
             string[] splitData = sourceData.Split(DELIMITER);
             
             //Параметры команды

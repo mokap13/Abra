@@ -35,9 +35,11 @@ namespace Hanabi
             gameField.tableDeck.PushCardForColor(pullCard);
         }
 
-        public void DropCard(Command command)
+        public void DropCard(GameField gameField, Command command)
         {
-            mDeck.Cards.RemoveAt(command.ChoosedCards[0]);
+            Card pullCard = mDeck.PullIndexCard(command.ChoosedCards[0]);
+            gameField.garbageDeck.PushCardForColor(pullCard);
+            TakeCardFromDeck(gameField.mainDeck);
         }
 
         public void TellColor(GameField gameField, Command command)

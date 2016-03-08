@@ -10,6 +10,8 @@ namespace Hanabi
         private CardColor mColor;
         private int mRank;
         private string mName;
+        private bool mColorVisible;
+        private bool mRankVisible;
 
         public Card(CardColor color,int rank,string name)
         {
@@ -23,6 +25,7 @@ namespace Hanabi
             mColor = (CardColor)color;
             mRank = (int)Char.GetNumericValue(rank);
             mName = String.Concat(color, rank);
+            mColorVisible = false;
         }
 
         public CardColor Color
@@ -51,6 +54,42 @@ namespace Hanabi
             get
             {
                 return mName;
+            }
+        }
+        public bool ColorVisible
+        {
+            get
+            {
+                return mColorVisible;
+            }
+            set
+            {
+                mColorVisible = value;
+            }
+        }
+        public bool RankVisible
+        {
+            get
+            {
+                return mRankVisible;
+            }
+            set
+            {
+                mRankVisible = true;
+            }
+        }
+        public bool CardVisible
+        {
+            get
+            {
+                if (mColorVisible == true && mRankVisible == true)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
     }

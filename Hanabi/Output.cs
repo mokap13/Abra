@@ -28,15 +28,39 @@ namespace Hanabi
             const char DELIMITER = ' ';
             int turn = gameField.turn;
             int score = gameField.score;
+            int risk = gameField.risk;
             bool finished = gameField.finished;
 
             Player currentPlayer = gameField.currentPlayer;
             Player nextPlayer = gameField.nextPlayer;
 
-            Console.WriteLine("turn: {0}, score: {1}, finished: {2}", turn, score, finished);
+            if (gameField.finished == true)
+            {
+                Console.WriteLine("Turn: {0}, cards: {1}, with risk: {2}", turn, score, risk);
+            }
+            Console.WriteLine("Turn: {0}, Score: {1}, Finished: {2}", turn, score, finished);
 
             ShowDeck(currentPlayer.Deck,DELIMITER);
             ShowDeck(nextPlayer.Deck,DELIMITER);
+            ShowDeck(gameField.tableDeck, DELIMITER);
+        }
+
+        public static void ShowGameOverStatus(GameField gameField)
+        {
+            const char DELIMITER = ' ';
+            int turn = gameField.turn;
+            int score = gameField.score;
+            int risk = gameField.risk;
+            bool finished = gameField.finished;
+
+            Player currentPlayer = gameField.currentPlayer;
+            Player nextPlayer = gameField.nextPlayer;
+
+            Console.WriteLine("Turn: {0}, cards: {1}, with risk: {2}", turn, score, risk);
+            Console.WriteLine("Turn: {0}, Score: {1}, Finished: {2}", turn, score, finished);
+
+            ShowDeck(currentPlayer.Deck, DELIMITER);
+            ShowDeck(nextPlayer.Deck, DELIMITER);
             ShowDeck(gameField.tableDeck, DELIMITER);
         }
     }

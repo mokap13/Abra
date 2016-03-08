@@ -76,7 +76,7 @@ namespace Hanabi
             return count;
         }
 
-        public bool CheckColor(CardColor? cardColor,int[] choosedCards)
+        public bool CheckColor(CardColor? cardColor, int[] choosedCards)
         {
             for (int i = 0; i < choosedCards.Length; i++)
             {
@@ -98,6 +98,28 @@ namespace Hanabi
                 }
             }
             return true;
+        }
+
+        public void ChangeStatusColorVisible(CardColor? cardColor, int[] choosedCards)
+        {
+            for (int i = 0; i < choosedCards.Length; i++)
+            {
+                if (cardColor == mCards[choosedCards[i]].Color)
+                {
+                    mCards[choosedCards[i]].ColorVisible = true;
+                }
+            }
+        }
+
+        public void ChangeStatusRankVisible(int? cardRank, int[] choosedCards)
+        {
+            for (int i = 0; i < choosedCards.Length; i++)
+            {
+                if (cardRank == mCards[choosedCards[i]].Rank)
+                {
+                    mCards[choosedCards[i]].RankVisible = true;
+                }
+            }
         }
 
         public bool ContainCard(Card choosedCard)

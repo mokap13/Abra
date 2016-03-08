@@ -45,13 +45,12 @@ namespace Hanabi
             }
             #endregion
 
-            Output.ShowGameStatus(mGameField);
-
             while (true)
             {
+                Output.ShowGameStatus(mGameField);
                 mCommand = Input.ReadCommand();
 
-                if (TryExecuteCommand(mGameField, mCommand) == true)
+                if (mGameField.finished == false && TryExecuteCommand(mGameField, mCommand) == true)
                 {
                     MakeMove(mGameField);
                 }
@@ -59,19 +58,7 @@ namespace Hanabi
                 {
                     mGameField.finished = true;
                 }
-                Output.ShowGameStatus(mGameField);
             }
-
-            Console.WriteLine();
-        }
-        /// <summary>
-        /// Выдать игроку карту из основной колоды
-        /// </summary>
-        /// <param name="player">Игрок</param>
-        private void GiveCardFromMainDeck(Player player)
-        {
-            Card pullCard = mGameField.mainDeck.PullTopCard();
-            player.Deck.Cards.Add(pullCard);
         }
         /// <summary>
         /// Возвращает true, если действие игрока не нарушает правил игры и 
@@ -92,23 +79,29 @@ namespace Hanabi
                     {
                         gameField.currentPlayer.PlayCard(gameField, command);
                         gameField.currentPlayer.TakeCardFromDeck(gameField.mainDeck);
+                        gameField.score++;
+                        if (gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]].CardVisible == false)
+                        {
+                            gameField.risk++;
+                        }
                         return true;
                     }
                     else
                     {
+                        gameField.currentPlayer.DropCard(gameField, command);
                         return false;
                     }
                 case CommandName.Dropcard:
                     choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
-                    gameField.currentPlayer.DropCard(command);
-                    gameField.currentPlayer.TakeCardFromDeck(gameField.mainDeck);
-                    break;
+                    gameField.currentPlayer.DropCard(gameField, command);
+                    return true;
                 case CommandName.Tellcolor:
                     int numberCardsOneColor = gameField.nextPlayer.Deck.GetNumberColor(command.CardColor);
                     if (numberCardsOneColor != command.ChoosedCards.Length)
                         return false;
                     if(gameField.nextPlayer.Deck.CheckColor(command.CardColor, command.ChoosedCards) == false)
                         return false;
+                    gameField.nextPlayer.Deck.ChangeStatusColorVisible(command.CardColor, command.ChoosedCards);
                     return true;
                 case CommandName.Tellrank:
                     int numberCardsOneRank = gameField.nextPlayer.Deck.GetNumberRank(command.CardRank);
@@ -116,6 +109,7 @@ namespace Hanabi
                         return false;
                     if(gameField.nextPlayer.Deck.CheсkRank(command.CardRank, command.ChoosedCards) == false)
                         return false;
+                    gameField.nextPlayer.Deck.ChangeStatusRankVisible(command.CardRank, command.ChoosedCards);
                     return true;
                 default:
                     return false;
