@@ -38,10 +38,10 @@ namespace Hanabi
             {
                 Console.WriteLine("Turn: {0}, cards: {1}, with risk: {2}", turn, score, risk);
             }
-            
+
             //Console.WriteLine("Turn: {0}, Score: {1}, Finished: {2}", turn, score, finished);
-            //ShowDeck(currentPlayer.Deck,DELIMITER);
-            //ShowDeck(nextPlayer.Deck,DELIMITER);
+            //ShowDeck(currentPlayer.Deck, DELIMITER);
+            //ShowDeck(nextPlayer.Deck, DELIMITER);
             //ShowDeck(gameField.tableDeck, DELIMITER);
         }
 

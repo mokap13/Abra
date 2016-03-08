@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Hanabi
 {
@@ -16,7 +17,7 @@ namespace Hanabi
         private Deck mMainDeck;
         private Deck mTableDeck;
 
-        public GameEngine()
+        public GameEngine(StreamReader file)
         {
             mGameField = new GameField();
 
@@ -34,12 +35,8 @@ namespace Hanabi
         /// </summary>
         public void StartGame()
         {
-            mCommand = Input.ReadCommand();
-            if (TryExecuteCommand(mGameField, mCommand) == false)
-            {
-                mGameField.finished = true;
-            }
-            ;
+            mGameField.mainDeck = Input.ReadMainDeck(mGameField);
+            
             #region Игроки берут по 5 карт из основной колоды
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
@@ -53,8 +50,8 @@ namespace Hanabi
 
             while (mGameField.finished == false)
             {
-                mCommand = Input.ReadCommand();
                 Output.ShowGameStatus(mGameField);
+                mCommand = Input.ReadCommand();
 
                 if (mGameField.finished == false && TryExecuteCommand(mGameField, mCommand) == true && mGameField.mainDeck.Count > 0)
                 {
@@ -65,9 +62,9 @@ namespace Hanabi
                     MakeMove(mGameField);
                     mGameField.finished = true;
                     Output.ShowGameStatus(mGameField);
-                } 
+                }
             }
-            
+
         }
         /// <summary>
         /// Возвращает true, если действие игрока не нарушает правил игры и 
@@ -81,12 +78,6 @@ namespace Hanabi
             Card choosedCard;
             switch (command.CommandName)
             {
-                #region Startnew
-                case CommandName.Startnew:
-                    if (command.Deck.Count < 11)
-                        return false;
-                    return true; 
-                #endregion
                 #region Playcard
                 case CommandName.Playcard:
                     choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
@@ -110,7 +101,7 @@ namespace Hanabi
                 case CommandName.Dropcard:
                     choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
                     gameField.currentPlayer.DropCard(gameField, command);
-                    return true; 
+                    return true;
                 #endregion
                 #region Tellcolor
                 case CommandName.Tellcolor:
@@ -120,7 +111,7 @@ namespace Hanabi
                     if (gameField.nextPlayer.Deck.CheckColor(command.CardColor, command.ChoosedCards) == false)
                         return false;
                     gameField.nextPlayer.Deck.ChangeStatusColorVisible(command.CardColor, command.ChoosedCards);
-                    return true; 
+                    return true;
                 #endregion
                 #region Tellrank
                 case CommandName.Tellrank:
@@ -130,7 +121,7 @@ namespace Hanabi
                     if (gameField.nextPlayer.Deck.CheсkRank(command.CardRank, command.ChoosedCards) == false)
                         return false;
                     gameField.nextPlayer.Deck.ChangeStatusRankVisible(command.CardRank, command.ChoosedCards);
-                    return true; 
+                    return true;
                 #endregion
                 default:
                     return false;

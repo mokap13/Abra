@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Hanabi
 {
@@ -23,7 +24,7 @@ namespace Hanabi
         /// <summary>
         /// Множество возможных команд в строковом представлении
         /// </summary>
-        private static string[] commands = {"Startnew", "Dropcard", "Playcard", "Tellcolor", "Tellrank" };
+        private static string[] commands = { "Start", "new", "game", "with", "deck", "Dropcard", "Playcard", "Tellcolor", "Tellrank" };
 
         private static CommandName? DefineCommandName(string sourceName)
         {
@@ -80,28 +81,34 @@ namespace Hanabi
             string inputData = null;
             string[] inputDataArray = null;
 
-            if (inputData.Contains("Startnewgamewithdeck"))
+            while (true)
             {
-                //Преобразуем входную строку в массив, используя 'Space' как разделитель
-                inputDataArray = inputData.Split(DELIMITER);
+                Console.Write(">");
+                //sourceData = Console.ReadLine();
+                inputData = Console.ReadLine();
+                Console.WriteLine(inputData);
 
-                foreach (string data in inputDataArray)
+                if (inputData.Contains("Start new game with deck "))
                 {
-                    if (commands.Contains(data))
-                        continue;
+                    //Преобразуем входную строку в массив, используя 'Space' как разделитель
+                    inputDataArray = inputData.Split(DELIMITER);
 
-                    Card card = new Card(data[CARD_COLOR_SOCKET], data[CARD_VALUE_SOCKET]);
-                    mainDeck.Cards.Add(card);
+                    foreach (string data in inputDataArray)
+                    {
+                        if (commands.Contains(data))
+                            continue;
+
+                        Card card = new Card(data[CARD_COLOR_SOCKET], data[CARD_VALUE_SOCKET]);
+                        mainDeck.Cards.Add(card);
+                    }
+                    return mainDeck;
                 }
-                return mainDeck;
+                else
+                {
+                    Console.WriteLine("Команда не корректна");
+                    Console.ReadLine();
+                }
             }
-            else
-            {
-                Console.WriteLine("Команда не корректна");
-                Console.ReadLine();
-                return mainDeck;
-            }
-            
         }
         /// <summary>
         /// Читает из входного потока введенную пользователем команду
@@ -109,23 +116,21 @@ namespace Hanabi
         /// <returns>Команда</returns>
         public static Command ReadCommand()
         {
-            const int CARD_COLOR_SOCKET = 0;
-            const int CARD_VALUE_SOCKET = 1;
             const int INDEX_CHOOSED_VALUE = 2;
             const int INDEX_CHOOSED_CARDS = 5;
-            const int INDEX_START_DECK = 6;
             //Ввод данных из консоли
             Console.Write(">");
-            string sourceData = "Start new game with deck R1 R2 R3 R4 R5 R1 R2 R3 R4 R5 R1 R2";
+            string sourceData = Console.ReadLine();
             string[] splitData = sourceData.Split(DELIMITER);
-            
-            //Параметры команды
+
+            #region Параметры команды
             Command command;
             int[] choosedCards = null;
             CardColor? cardColor = null;
             int? cardRank = null;
             CommandName? commandName = null;
-            int numbersChoosedCards;
+            int numbersChoosedCards; 
+            #endregion
 
             commandName = DefineCommandName(splitData[0] + splitData[1]);
 
@@ -136,22 +141,6 @@ namespace Hanabi
                 return null;
             }
 
-            #region Startnew
-            if (commandName == CommandName.Startnew)
-            {
-                Deck deck = new Deck();
-
-                for (int i = INDEX_START_DECK; i < splitData.Length; i++)
-                {
-                    Card card = new Card(splitData[i][CARD_COLOR_SOCKET], splitData[i][CARD_VALUE_SOCKET]);
-                    deck.Cards.Add(card); 
-                }
-                
-                command = new Command(commandName,deck);
-                return command;
-            } 
-            #endregion
-
             #region Play and Drop
             if (commandName == CommandName.Playcard || commandName == CommandName.Dropcard)
             {
@@ -160,7 +149,6 @@ namespace Hanabi
                 choosedCards[0] = int.Parse(splitData[INDEX_CHOOSED_VALUE]);
             } 
             #endregion
-
             #region Tellcolor and Tellrank
             if (commandName == CommandName.Tellcolor || commandName == CommandName.Tellrank)
             {
