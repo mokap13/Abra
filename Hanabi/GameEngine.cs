@@ -8,7 +8,7 @@ namespace Hanabi
 {
     class GameEngine
     {
-        const int START_SIZE_PLAYER_DECK = 5;
+        private const int START_SIZE_PLAYER_DECK = 5;
         private Command mCommand;
         private GameField mGameField;
         private Player mPlayerA;
@@ -34,14 +34,14 @@ namespace Hanabi
         {
             mGameField.mainDeck = Input.ReadMainDeck(mGameField);
 
-            #region Выдача по 5 карт каждому игроку
+            #region Игроки берут по 5 карт из основной колоды
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCardFromMainDeck(mPlayerA);
+                mPlayerA.TakeCardFromDeck(mGameField.mainDeck);
             }
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
-                GiveCardFromMainDeck(mPlayerB);
+                mPlayerB.TakeCardFromDeck(mGameField.mainDeck);
             }
             #endregion
 
@@ -82,15 +82,16 @@ namespace Hanabi
         /// <returns></returns>
         private bool TryExecuteCommand(GameField gameField, Command command)
         {
+            Card choosedCard;
             switch (command.CommandName)
             {
                 case CommandName.Playcard:
-                    Card choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
+                    choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
                     //Ранг выбранной карты должен быть на 1 выше ранга карты колоды стола
                     if ((int)choosedCard.Rank - 1 == gameField.tableDeck.GetMaxRank(choosedCard.Color))
                     {
                         gameField.currentPlayer.PlayCard(gameField, command);
-                        GiveCardFromMainDeck(gameField.currentPlayer);
+                        gameField.currentPlayer.TakeCardFromDeck(gameField.mainDeck);
                         return true;
                     }
                     else
@@ -98,7 +99,9 @@ namespace Hanabi
                         return false;
                     }
                 case CommandName.Dropcard:
-
+                    choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
+                    gameField.currentPlayer.DropCard(command);
+                    gameField.currentPlayer.TakeCardFromDeck(gameField.mainDeck);
                     break;
                 case CommandName.Tellcolor:
                     break;

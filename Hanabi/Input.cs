@@ -83,7 +83,6 @@ namespace Hanabi
             
             //Параметры команды
             Command command;
-            int choosedCard = 0;
             int[] choosedCards = new int[5];
             CardColor? cardColor = null;
             int? cardRank = null;
@@ -98,8 +97,6 @@ namespace Hanabi
                 return null;
             }
 
-            choosedCard = int.Parse(splitData[INDEX_CHOOSED_VALUE]);
-            
             if (commandName == CommandName.Playcard || commandName == CommandName.Dropcard)
             {
                 choosedCards[0] = int.Parse(splitData[INDEX_CHOOSED_VALUE]);
