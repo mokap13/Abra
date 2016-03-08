@@ -83,6 +83,9 @@ namespace Hanabi
             switch (command.CommandName)
             {
                 case CommandName.Playcard:
+                    Card choosedCard = gamefield.currentPlayer.Deck.Cards[command.ChoosedCards[0] - 1];
+                    if ((int)choosedCard.Rank <= gamefield.tableDeck.GetMaxRank(choosedCard.Color));
+                        return false;
                     break;
                 case CommandName.Dropcard:
                     break;

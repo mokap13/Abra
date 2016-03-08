@@ -9,35 +9,32 @@ namespace Hanabi
     class Command
     {
         private CommandName? mCommandName;
-        private int mChoosedCard;
         private int[] mChoosedCards;
         private CardColor? mCardColor;
         private CardRank? mCardRank;
 
-        public Command(CommandName? commandName,int choosedCard)
+        public Command(CommandName? commandName)
         {
             mCommandName = commandName;
-            mChoosedCard = choosedCard;
         }
 
-        public Command(CommandName? commandName,int choosedCard, int[] choosedCards, CardColor? color)
+        public Command(CommandName? commandName, int[] choosedCards, CardColor? color)
         {
             mCommandName = commandName;
             mCardColor = color;
             mChoosedCards = choosedCards;
         }
 
-        public Command(CommandName? commandName, int choosedCard, int[] choosedCards, CardRank? rank)
+        public Command(CommandName? commandName, int[] choosedCards, CardRank? rank)
         {
             mCommandName = commandName;
             mCardRank = rank;
             mChoosedCards = choosedCards;
         }
 
-        public Command(CommandName? commandName, int choosedCard, int[] choosedCards, CardColor? color, CardRank? rank)
+        public Command(CommandName? commandName, int[] choosedCards, CardColor? color, CardRank? rank)
         {
             mCommandName = commandName;
-            mChoosedCard = choosedCard;
             mChoosedCards = choosedCards;
             mCardRank = rank;
             mCardColor = color;
@@ -51,14 +48,6 @@ namespace Hanabi
             }
         }
 
-        public int ChoosedCard
-        {
-            get
-            {
-                return mChoosedCard;
-            }
-        }
-
         public int[] ChoosedCards
         {
             get
@@ -66,7 +55,9 @@ namespace Hanabi
                 return mChoosedCards;
             }
         }
-
+        /// <summary>
+        /// Цвет карты
+        /// </summary>
         public CardColor? CardColor
         {
             get
@@ -74,7 +65,9 @@ namespace Hanabi
                 return mCardColor;
             }
         }
-
+        /// <summary>
+        /// Ранг карты
+        /// </summary>
         public CardRank? CardRank
         {
             get
@@ -83,7 +76,9 @@ namespace Hanabi
             }
         }
     }
-
+    /// <summary>
+    /// Имя команды
+    /// </summary>
     public enum CommandName
     {
         Playcard,
