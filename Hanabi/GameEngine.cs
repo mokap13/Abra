@@ -104,11 +104,21 @@ namespace Hanabi
                     gameField.currentPlayer.TakeCardFromDeck(gameField.mainDeck);
                     break;
                 case CommandName.Tellcolor:
-                    break;
+                    int numberCardsOneColor = gameField.nextPlayer.Deck.GetNumberColor(command.CardColor);
+                    if (numberCardsOneColor != command.ChoosedCards.Length)
+                        return false;
+                    if(gameField.nextPlayer.Deck.CheckColor(command.CardColor, command.ChoosedCards) == false)
+                        return false;
+                    return true;
                 case CommandName.Tellrank:
-                    break;
+                    int numberCardsOneRank = gameField.nextPlayer.Deck.GetNumberRank(command.CardRank);
+                    if (numberCardsOneRank != command.ChoosedCards.Length)
+                        return false;
+                    if(gameField.nextPlayer.Deck.ChekRank(command.CardRank, command.ChoosedCards) == false)
+                        return false;
+                    return true;
                 default:
-                    break;
+                    return false;
             }
             return false;
         }
