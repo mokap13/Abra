@@ -102,11 +102,23 @@ namespace Hanabi
 
         public void ChangeStatusColorVisible(CardColor? cardColor, int[] choosedCards)
         {
+            //Меняет статус видимости цвета если другой игрок рассказал о нем
             for (int i = 0; i < choosedCards.Length; i++)
             {
                 if (cardColor == mCards[choosedCards[i]].Color)
                 {
                     mCards[choosedCards[i]].ColorVisible = true;
+                }
+            }
+            //Меняет статус видимости цвета если цвет карты не является ни одним из других цветов
+            for (int i = 0; i < 5; i++)
+            {
+                if (choosedCards.Contains(i) == false)
+                {
+                    if(mCards[i].NoColors.Contains(cardColor) == false)
+                        mCards[i].NoColors.Add(cardColor);
+                    if (mCards[i].NoColors.Count == 4)
+                        mCards[i].ColorVisible = true;
                 }
             }
         }
@@ -118,6 +130,17 @@ namespace Hanabi
                 if (cardRank == mCards[choosedCards[i]].Rank)
                 {
                     mCards[choosedCards[i]].RankVisible = true;
+                }
+            }
+            //Меняет статус видимости цвета если цвет карты не является ни одним из других цветов
+            for (int i = 0; i < 5; i++)
+            {
+                if (choosedCards.Contains(i) == false)
+                {
+                    if (mCards[i].NoRanks.Contains(cardRank) == false)
+                        mCards[i].NoRanks.Add(cardRank);
+                    if (mCards[i].NoRanks.Count == 4)
+                        mCards[i].RankVisible = true;
                 }
             }
         }
@@ -150,6 +173,10 @@ namespace Hanabi
 
         public void PushCardForColor(Card choosedCard)
         {
+            if (mCards.Count == 0)
+            {
+                mCards.Add(choosedCard);
+            }
             foreach (Card card in mCards)
             {
                 if (card.Color == choosedCard.Color)
@@ -199,6 +226,32 @@ namespace Hanabi
                 }
             }
             return count;
+        }
+
+        public List<CardColor?> GetColorsForRank(int? cardRank)
+        {
+            List<CardColor?> listColors = new List<CardColor?>();
+            foreach (Card card in mCards)
+            {
+                if (card.Rank == cardRank)
+                {
+                    listColors.Add(card.Color);
+                }
+            }
+            return listColors;
+        }
+
+        public List<CardColor?> GetNoColorsForRank(int? cardRank)
+        {
+            List<CardColor?> listColors = new List<CardColor?>();
+            foreach (Card card in mCards)
+            {
+                if (card.Rank != cardRank)
+                {
+                    listColors.Add(card.Color);
+                }
+            }
+            return listColors;
         }
 
         public int Count

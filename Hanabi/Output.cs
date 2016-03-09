@@ -18,9 +18,25 @@ namespace Hanabi
             Console.Write("{0,18}", deck.Name);
             foreach (var card in deck.Cards)
             {
-                System.Console.Write(card.Name + delimiter);
+                Console.Write(card.Name + delimiter);
             }
-            Console.Write("\n");
+        }
+
+        public static void ShowDeckIf(Deck deck, char delimiter)
+        {
+            Console.Write("{0,18}", deck.Name);
+            foreach (var card in deck.Cards)
+            {
+                if (card.ColorVisible == true)
+                    Console.Write(card.Color.ToString()[0]);
+                else
+                    Console.Write("*");
+                if (card.RankVisible == true)
+                    Console.Write(card.Rank.ToString());
+                else
+                    Console.Write("*");
+                Console.Write(delimiter);
+            }
         }
 
         public static void ShowGameStatus(GameField gameField)
@@ -40,9 +56,15 @@ namespace Hanabi
             }
 
             //Console.WriteLine("Turn: {0}, Score: {1}, Finished: {2}", turn, score, finished);
-            //ShowDeck(currentPlayer.Deck, DELIMITER);
+            //ShowDeckIf(currentPlayer.Deck, DELIMITER);
+            //Console.Write(" ---- ");
+            //ShowDeckIf(currentPlayer.DropDeck, DELIMITER);
+            //Console.Write("\n");
             //ShowDeck(nextPlayer.Deck, DELIMITER);
+            //Console.Write("\n");
             //ShowDeck(gameField.tableDeck, DELIMITER);
+            //Console.Write("\n");
+            //Console.WriteLine("-----------------------------------------------------");
         }
 
         public static void ShowGameOverStatus(GameField gameField)

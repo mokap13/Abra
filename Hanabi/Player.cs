@@ -9,10 +9,12 @@ namespace Hanabi
     class Player
     {
         private Deck mDeck;
+        private Deck mDropDeck;
 
         public Player()
         {
             mDeck = new Deck();
+            mDropDeck = new Deck();
         }
 
         public Deck Deck
@@ -20,6 +22,18 @@ namespace Hanabi
             get
             {
                 return mDeck;
+            }
+        }
+
+        public Deck DropDeck
+        {
+            get
+            {
+                return mDropDeck;
+            }
+            set
+            {
+                mDropDeck = value;
             }
         }
 
@@ -31,15 +45,17 @@ namespace Hanabi
 
         public void PlayCard(GameField gameField, Command command)
         {
-            Card pullCard = mDeck.PullIndexCard(command.ChoosedCards[0]);
+            int choosedCard = (int)command.ChoosedCards[0];
+            Card pullCard = mDeck.PullIndexCard(choosedCard);
             gameField.tableDeck.PushCardForColor(pullCard);
             TakeCardFromDeck(gameField.mainDeck);
         }
 
         public void DropCard(GameField gameField, Command command)
         {
-            Card pullCard = mDeck.PullIndexCard(command.ChoosedCards[0]);
-            gameField.garbageDeck.PushCardForColor(pullCard);
+            int choosedCard = (int)command.ChoosedCards[0];
+            Card pullCard = mDeck.PullIndexCard(choosedCard);
+            mDropDeck.PushCardForColor(pullCard);
             TakeCardFromDeck(gameField.mainDeck);
         }
 

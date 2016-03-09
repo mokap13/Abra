@@ -12,6 +12,8 @@ namespace Hanabi
         private string mName;
         private bool mColorVisible;
         private bool mRankVisible;
+        private List<CardColor?> mNoColors;
+        private List<int?> mNoRanks;
 
         public Card(CardColor color,int rank,string name)
         {
@@ -26,6 +28,9 @@ namespace Hanabi
             mRank = (int)Char.GetNumericValue(rank);
             mName = String.Concat(color, rank);
             mColorVisible = false;
+
+            mNoColors = new List<CardColor?>();
+            mNoRanks = new List<int?>();
         }
 
         public CardColor Color
@@ -90,6 +95,20 @@ namespace Hanabi
                 {
                     return false;
                 }
+            }
+        }
+        public List<CardColor?> NoColors
+        {
+            get
+            {
+                return mNoColors;
+            }
+        }
+        public List<int?> NoRanks
+        {
+            get
+            {
+                return mNoRanks;
             }
         }
     }

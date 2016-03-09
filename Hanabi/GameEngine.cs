@@ -50,7 +50,6 @@ namespace Hanabi
 
             while (mGameField.finished == false)
             {
-                
                 Output.ShowGameStatus(mGameField);
                 mCommand = Input.ReadCommand(sourceData[j]);
 
@@ -83,11 +82,14 @@ namespace Hanabi
                 case CommandName.Playcard:
                     choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
                     //Ранг выбранной карты должен быть на 1 выше ранга карты колоды стола
+                    
                     if ((int)choosedCard.Rank - 1 == gameField.tableDeck.GetMaxRank(choosedCard.Color))
                     {
                         if (CheckRisk(gameField, choosedCard) == true)
+                        {
                             gameField.risk++;
-
+                        }
+                            
                         gameField.currentPlayer.PlayCard(gameField, command);
                         gameField.score++;
                         return true;
@@ -143,18 +145,41 @@ namespace Hanabi
 
         private bool CheckRisk(GameField gameField, Card card)
         {
+            List<CardColor?> tableNoColors = new List<CardColor?>();
+            tableNoColors = gameField.tableDeck.GetNoColorsForRank(card.Rank - 1);
+            
             if (gameField.finished == true)
                 return false;
-            if (card.ColorVisible == true && gameField.tableDeck.GetMaxRank(card.Color) == 4)
+
+            if (card.CardVisible == true)
                 return false;
+
             if (card.RankVisible == false)
             {
                 return true;
             }
-            else if (gameField.tableDeck.GetMinRank() == gameField.tableDeck.GetMaxRank())
+
+            if (card.ColorVisible == true)
+            {
+                if (gameField.tableDeck.GetMaxRank(card.Color) == 4)
+                    return false; 
+            }
+
+            if (gameField.tableDeck.GetMinRank() == gameField.tableDeck.GetMaxRank())
             {
                 return false;
             }
+            foreach (CardColor? color in tableNoColors)
+            {
+                if (card.NoColors.Contains(color) == false)
+                {
+                    return true;
+                }
+                else
+                {
+                    continue;
+                }
+            } 
             return false;
         }
     }

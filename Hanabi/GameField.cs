@@ -33,8 +33,8 @@ namespace Hanabi
             tableDeck.Cards.Add(new Card('R', '0'));
             tableDeck.Cards.Add(new Card('G', '0'));
             tableDeck.Cards.Add(new Card('B', '0'));
-            tableDeck.Cards.Add(new Card('Y', '0'));
             tableDeck.Cards.Add(new Card('W', '0'));
+            tableDeck.Cards.Add(new Card('Y', '0'));
             tableDeck.Name = "Table: ";
         }
 

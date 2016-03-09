@@ -73,6 +73,7 @@ namespace Hanabi
 
         public static Deck ReadMainDeck(GameField gameField, string sourceData)
         {
+            //Console.WriteLine(sourceData);
             Deck mainDeck = gameField.mainDeck;
 
             const int CARD_COLOR_SOCKET = 0;
@@ -116,6 +117,7 @@ namespace Hanabi
         /// <returns>Команда</returns>
         public static Command ReadCommand(string sourceData)
         {
+            //Console.WriteLine(">" + sourceData);
             const int INDEX_CHOOSED_VALUE = 2;
             const int INDEX_CHOOSED_CARDS = 5;
             //Ввод данных из консоли
