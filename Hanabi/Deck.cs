@@ -175,6 +175,32 @@ namespace Hanabi
             return count;
         }
 
+        public int GetMaxRank()
+        {
+            int count = 0;
+            foreach (Card card in mCards)
+            {
+                if ((int)card.Rank > count)
+                {
+                    count = card.Rank;
+                }
+            }
+            return count;
+        }
+
+        public int GetMinRank()
+        {
+            int count = 0;
+            foreach (Card card in mCards)
+            {
+                if ((int)card.Rank < count)
+                {
+                    count = card.Rank;
+                }
+            }
+            return count;
+        }
+
         public int Count
         {
             get

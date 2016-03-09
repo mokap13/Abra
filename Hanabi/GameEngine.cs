@@ -145,11 +145,13 @@ namespace Hanabi
         {
             if (gameField.finished == true)
                 return false;
+            if (card.ColorVisible == true && gameField.tableDeck.GetMaxRank(card.Color) == 4)
+                return false;
             if (card.RankVisible == false)
             {
                 return true;
             }
-            else if (card.ColorVisible == false && gameField.turn != 0)
+            else if (gameField.tableDeck.GetMinRank() == gameField.tableDeck.GetMaxRank())
             {
                 return false;
             }
