@@ -165,10 +165,10 @@ namespace Hanabi
                     return false; 
             }
 
-            if (gameField.tableDeck.GetMinRank() == gameField.tableDeck.GetMaxRank())
-            {
-                return false;
-            }
+            //if (gameField.tableDeck.GetMinRank() == gameField.tableDeck.GetMaxRank())
+            //{
+            //    return false;
+            //}
             foreach (CardColor? color in tableNoColors)
             {
                 if (card.NoColors.Contains(color) == false)
