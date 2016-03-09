@@ -11,11 +11,14 @@ namespace Hanabi
     {
         static void Main(string[] args)
         {
-            while (true)
+            string[] sourceData = File.ReadAllLines(@"C:\TEST\test.in");
+
+            for (int j = 0; j < sourceData.Length; )
             {
                 GameEngine gameEngine = new GameEngine();
-                gameEngine.StartGame(); 
+                gameEngine.StartGame(sourceData, ref j);
             }
+            Console.ReadLine();
         }
     }
 }

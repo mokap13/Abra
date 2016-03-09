@@ -17,7 +17,7 @@ namespace Hanabi
         private Deck mMainDeck;
         private Deck mTableDeck;
 
-        public GameEngine(StreamReader file)
+        public GameEngine()
         {
             mGameField = new GameField();
 
@@ -33,10 +33,10 @@ namespace Hanabi
         /// <summary>
         /// Начинает игру
         /// </summary>
-        public void StartGame()
+        public void StartGame(string[] sourceData, ref int j)
         {
-            mGameField.mainDeck = Input.ReadMainDeck(mGameField);
-            
+            mGameField.mainDeck = Input.ReadMainDeck(mGameField, sourceData[j]);
+            j++;
             #region Игроки берут по 5 карт из основной колоды
             for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
             {
@@ -50,8 +50,9 @@ namespace Hanabi
 
             while (mGameField.finished == false)
             {
+                
                 Output.ShowGameStatus(mGameField);
-                mCommand = Input.ReadCommand();
+                mCommand = Input.ReadCommand(sourceData[j]);
 
                 if (mGameField.finished == false && TryExecuteCommand(mGameField, mCommand) == true && mGameField.mainDeck.Count > 0)
                 {
@@ -63,8 +64,8 @@ namespace Hanabi
                     mGameField.finished = true;
                     Output.ShowGameStatus(mGameField);
                 }
-            }
-
+                j++;
+            } 
         }
         /// <summary>
         /// Возвращает true, если действие игрока не нарушает правил игры и 

@@ -71,29 +71,29 @@ namespace Hanabi
             return sourceText.Length;
         }
 
-        public static Deck ReadMainDeck(GameField gameField)
+        public static Deck ReadMainDeck(GameField gameField, string sourceData)
         {
             Deck mainDeck = gameField.mainDeck;
 
             const int CARD_COLOR_SOCKET = 0;
             const int CARD_VALUE_SOCKET = 1;
 
-            string inputData = null;
-            string[] inputDataArray = null;
+            //sourceData = null;
+            string[] sourceDataArray = null;
 
             while (true)
             {
-                Console.Write(">");
+                //Console.Write(">");
                 //sourceData = Console.ReadLine();
-                inputData = Console.ReadLine();
-                Console.WriteLine(inputData);
+               // sourceData = Console.ReadLine();
+                //Console.WriteLine(sourceData);
 
-                if (inputData.Contains("Start new game with deck "))
+                if (sourceData.Contains("Start new game with deck "))
                 {
                     //Преобразуем входную строку в массив, используя 'Space' как разделитель
-                    inputDataArray = inputData.Split(DELIMITER);
+                    sourceDataArray = sourceData.Split(DELIMITER);
 
-                    foreach (string data in inputDataArray)
+                    foreach (string data in sourceDataArray)
                     {
                         if (commands.Contains(data))
                             continue;
@@ -114,13 +114,13 @@ namespace Hanabi
         /// Читает из входного потока введенную пользователем команду
         /// </summary>
         /// <returns>Команда</returns>
-        public static Command ReadCommand()
+        public static Command ReadCommand(string sourceData)
         {
             const int INDEX_CHOOSED_VALUE = 2;
             const int INDEX_CHOOSED_CARDS = 5;
             //Ввод данных из консоли
-            Console.Write(">");
-            string sourceData = Console.ReadLine();
+            //Console.Write(">");
+            //string sourceData = Console.ReadLine();
             string[] splitData = sourceData.Split(DELIMITER);
 
             #region Параметры команды
