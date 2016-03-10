@@ -159,16 +159,6 @@ namespace Hanabi
                 return true;
             }
 
-            if (card.ColorVisible == true)
-            {
-                if (gameField.tableDeck.GetMaxRank(card.Color) == 4)
-                    return false; 
-            }
-
-            //if (gameField.tableDeck.GetMinRank() == gameField.tableDeck.GetMaxRank())
-            //{
-            //    return false;
-            //}
             foreach (CardColor? color in tableNoColors)
             {
                 if (card.NoColors.Contains(color) == false)

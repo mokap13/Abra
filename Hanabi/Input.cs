@@ -61,7 +61,7 @@ namespace Hanabi
             return rank;
         }
 
-        private static int GetIndex(string[] sourceText, string text)
+        private static int GetIndex(this string[] sourceText, string text)
         {
             for (int i = 0; i < sourceText.Length; i++)
             {
@@ -78,17 +78,11 @@ namespace Hanabi
 
             const int CARD_COLOR_SOCKET = 0;
             const int CARD_VALUE_SOCKET = 1;
-
-            //sourceData = null;
+            
             string[] sourceDataArray = null;
 
             while (true)
             {
-                //Console.Write(">");
-                //sourceData = Console.ReadLine();
-               // sourceData = Console.ReadLine();
-                //Console.WriteLine(sourceData);
-
                 if (sourceData.Contains("Start new game with deck "))
                 {
                     //Преобразуем входную строку в массив, используя 'Space' как разделитель
@@ -124,7 +118,7 @@ namespace Hanabi
             //Console.Write(">");
             //string sourceData = Console.ReadLine();
             string[] splitData = sourceData.Split(DELIMITER);
-
+            
             #region Параметры команды
             Command command;
             int[] choosedCards = null;

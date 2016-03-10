@@ -11,7 +11,7 @@ namespace Hanabi
     {
         static void Main(string[] args)
         {
-            string[] sourceData = File.ReadAllLines(@"C:\TEST\test.in");
+            string[] sourceData = File.ReadAllLines(@"C:\TEST\2-big.in");
 
             for (int j = 0; j < sourceData.Length; )
             {
