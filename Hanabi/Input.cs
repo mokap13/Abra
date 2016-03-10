@@ -164,5 +164,20 @@ namespace Hanabi
             command = new Command(commandName, choosedCards, cardColor, cardRank);
             return command;
         }
+
+        public static void NewReadCommand()
+        {
+            string sourceData = "Start new game with deck R1 G2 B3 W4 Y5 R1 R1 B1 B2 W1 W2 W1";
+            string[] splitSourceData = sourceData.Split(' ');
+
+            Console.WriteLine();
+        }
+    }
+    enum NewMainCommand
+    {
+        Start = "Start",
+        Play = "Play",
+        Drop = "Drop",
+        Tell = "Tell"
     }
 }

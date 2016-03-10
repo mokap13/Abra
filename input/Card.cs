@@ -5,7 +5,7 @@ using System.Text;
 
 namespace input
 {
-    class Card
+    class newCard
     {
         private CardColor mColor;
         private int mRank;
@@ -15,11 +15,11 @@ namespace input
         private List<CardColor> mNoColors;
         private List<int> mNoRanks;
 
-        public Card(string name)
+        public newCard(string name)
         {
             mName = name;
             mColor = (CardColor)name[0];
-            mRank = Convert.ToInt16(name[1]);
+            mRank = (int)char.GetNumericValue(name[1]);
         }
 
         public CardColor Color
