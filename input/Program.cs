@@ -10,7 +10,7 @@ namespace input
     {
         static void Main(string[] args)
         {
-            newInput.ReadCommand();
+            newInput.ReadCommand(new Player());
         }
     }
 }
