@@ -32,6 +32,7 @@ namespace input
                     PutCard(splitSourceData, dropCard);
                     break;
                 case "Tell":
+                    Tell(splitSourceData, player);
                     break;
                 default:
                     throw new Exception("Main command is incorrect");
@@ -110,6 +111,24 @@ namespace input
             return true;
         }
 
+        private static bool IsValidCommandColor(string[] sourceData)
+        {
+            if (sourceData.Length == 1
+                && IsValidCardColor(sourceData.First()))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsValidCommandRank(string[] sourceData)
+        {
+            if (sourceData.Length == 1
+                && IsValidCardRank(sourceData.First()))
+                return true;
+
+            return false;
+        }
+
         private static int? GetIndex(this string[] sourceText, string text)
         {
             for (int i = 0; i < sourceText.Length; i++)
@@ -120,6 +139,48 @@ namespace input
                 }
             }
             return null;
+        }
+
+        private static int[] ToCardsNumbers(this string[] sourceData)
+        {
+            const int NUMBER_OF_COMMANDS = 2;
+            string[] commands = sourceData.Take(NUMBER_OF_COMMANDS).ToArray();
+            sourceData = sourceData.Skip(NUMBER_OF_COMMANDS).ToArray();
+
+            if (commands[0].Contains("for") && commands[1].Contains("cards"))
+            {
+                if (IsValidCommandCards(sourceData))
+                {
+                    return sourceData.ToIntArray();
+                }
+            }
+            else
+            {
+                throw new Exception("Command don't contain " + commands);
+            }
+            return null;
+        }
+
+        private static int ToInt(this string[] sourceData)
+        {
+            int number = int.Parse(sourceData.First());
+            return number;
+        }
+
+        private static CardColor ToCardColor(this string[] sourceData)
+        {
+            CardColor cardColor = (CardColor)Enum.Parse(typeof(CardColor), sourceData.First());
+            return cardColor;
+        }
+
+        private static int[] ToIntArray(this string[] sourceArray)
+        {
+            int[] distantArrray = new int[sourceArray.Length];
+            for (int i = 0; i < sourceArray.Length; i++)
+            {
+                distantArrray[i] = int.Parse(sourceArray[i]);
+            }
+            return distantArrray;
         }
 
         private static void Start(string[] sourceData)
@@ -152,7 +213,7 @@ namespace input
             if (commandName == "card")
                 if (IsValidCommandCard(sourceData))
                 {
-                    int cardNumber = PullCardNumber(sourceData);
+                    int cardNumber = ToInt(sourceData);
                     playerAction(cardNumber);
                 }
                 else
@@ -163,54 +224,29 @@ namespace input
                 throw new Exception("Command is don't contain " + commandName);
         }
 
-        private static void Tell(string[] sourceData)
+        private static void Tell(string[] sourceData, Player player)
         {
             string commandName = sourceData.First();
             sourceData = sourceData.Skip(1).ToArray();
-
+            int[] cardsNumbers;
+            
             switch (commandName)
             {
                 case "color":
-
+                    CardColor cardColor = sourceData.ToCardColor();
+                    sourceData = sourceData.Skip(1).ToArray();
+                    cardsNumbers = sourceData.ToCardsNumbers();
+                    player.TellColor(cardsNumbers, cardColor);
                     break;
                 case "rank":
-
+                    int cardRank = sourceData.ToInt();
+                    sourceData = sourceData.Skip(1).ToArray();
+                    cardsNumbers = sourceData.ToCardsNumbers();
+                    player.TellRank(cardsNumbers, cardRank);
                     break;
                 default:
                     throw new Exception("Command is don't contain " + commandName);
             }
-        }
-
-        private static int[] PullCardsNumbers(this string[] sourceData)
-        {
-            const int NUMBER_OF_COMMANDS = 2;
-            string[] commands = sourceData.Take(NUMBER_OF_COMMANDS).ToArray();
-            sourceData = sourceData.Skip(NUMBER_OF_COMMANDS).ToArray();
-
-            if (commands[0].Contains("for") && commands[1].Contains("cards"))
-            {
-                if (IsValidCommandCards(sourceData))
-                {
-                    int[] cardNumbers = sourceData.ToInt();
-                }
-            }
-            return null;
-        }
-
-        private static int PullCardNumber(this string[] sourceData)
-        {
-            int number = int.Parse(sourceData.First(str => IsValidCardNumber(str)));
-            return number;
-        }
-
-        private static int[] ToInt(this string[] sourceArray)
-        {
-            int[] distantArrray = new int[sourceArray.Length];
-            for (int i = 0; i < sourceArray.Length; i++)
-            {
-                distantArrray[i] = int.Parse(sourceArray[i]);
-            }
-            return distantArrray;
         }
     }
 }
