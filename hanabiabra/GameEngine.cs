@@ -31,16 +31,16 @@ namespace hanabiabra
         /// <summary>
         /// Начинает игру
         /// </summary>
-        public void StartGame(Command command)
+        public void MoveMake(Command command)
         {
             if (TryExecuteCommand(command, mGameField) == true
                 && mGameField.mainDeck.Count > 0)
             {
-                MakeMove(mGameField);
+                UpdateGameField(mGameField);
             }
             else
             {
-                MakeMove(mGameField);
+                UpdateGameField(mGameField);
                 mGameField.finished = true;
             }
             Output.ShowGameStatus(mGameField);
@@ -67,6 +67,7 @@ namespace hanabiabra
                         mGameField.mainDeck = command.Deck;
                         TakeStartDeck();
                         mGameField.turn --;
+                        ChangePlayer(mGameField);
                         return true;
                     }
                     return false;
@@ -78,6 +79,7 @@ namespace hanabiabra
                             gameField.risk++;
                         currentPlayer.PlayCard(command.CardIndex, gameField.tableDeck);
                         currentPlayer.TakeCardFromDeck(gameField.mainDeck);
+                        mGameField.score++;
                         return true;
                     }
                     return false;
@@ -111,18 +113,18 @@ namespace hanabiabra
         /// Обновляет параметры игрового поля
         /// </summary>
         /// <param name="gameField">Исходное поле</param>
-        private void MakeMove(GameField gameField)
+        private void UpdateGameField(GameField gameField)
         {
             gameField.turn++;
-            ChangePlayer(gameField.currentPlayer, gameField.nextPlayer);
-            gameField.UpdatePlayerStatus();
+            ChangePlayer(mGameField);
         }
 
-        private void ChangePlayer(Player playerA, Player playerB)
+        private void ChangePlayer(GameField gameField)
         {
-            Player tempPlayer = playerA;
-            playerA = playerB;
-            playerB = tempPlayer;
+            Player tempPlayer = gameField.currentPlayer;
+            gameField.currentPlayer = gameField.nextPlayer;
+            gameField.nextPlayer = tempPlayer;
+            gameField.UpdatePlayerStatus();
         }
 
         private bool CheckRisk(Card choosedCard, Deck tableDeck)

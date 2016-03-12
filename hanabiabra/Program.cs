@@ -12,7 +12,7 @@ namespace hanabiabra
         static void Main(string[] args)
         {
             GameEngine gameEngine = null;
-            string[] sourceData = File.ReadAllLines(@"C:\TEST\2-big.in");
+            string[] sourceData = File.ReadAllLines(@"C:\TEST\1-2.in");
             
             for (int i = 0; i < sourceData.Length; i++)
             {
@@ -21,8 +21,7 @@ namespace hanabiabra
                 {
                     gameEngine = new GameEngine();
                 }
-                gameEngine.StartGame(command);
-                Console.ReadLine();
+                gameEngine.MoveMake(command);
             }
             Console.ReadLine();
         }

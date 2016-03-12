@@ -55,16 +55,16 @@ namespace hanabiabra
                 Console.WriteLine("Turn: {0}, cards: {1}, with risk: {2}", turn, score, risk);
             }
 
-            Console.WriteLine("Turn: {0}, Score: {1}, Finished: {2}", turn, score, finished);
-            ShowDeckIf(currentPlayer.Deck, DELIMITER);
-            Console.Write(" ---- ");
-            ShowDeckIf(currentPlayer.DropDeck, DELIMITER);
-            Console.Write("\n");
-            ShowDeck(nextPlayer.Deck, DELIMITER);
-            Console.Write("\n");
-            ShowDeck(gameField.tableDeck, DELIMITER);
-            Console.Write("\n");
-            Console.WriteLine("-----------------------------------------------------");
+            //Console.WriteLine("Turn: {0}, Score: {1}, Finished: {2}", turn, score, finished);
+            //ShowDeckIf(currentPlayer.Deck, DELIMITER);
+            //Console.Write(" ---- ");
+            //ShowDeckIf(currentPlayer.DropDeck, DELIMITER);
+            //Console.Write("\n");
+            //ShowDeck(nextPlayer.Deck, DELIMITER);
+            //Console.Write("\n");
+            //ShowDeck(gameField.tableDeck, DELIMITER);
+            //Console.Write("\n");
+            //Console.WriteLine("-----------------------------------------------------");
         }
 
         public static void ShowGameOverStatus(GameField gameField)

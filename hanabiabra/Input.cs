@@ -216,7 +216,7 @@ namespace hanabiabra
 
         public static Command ParseCommand(string sourceData)
         {
-            Console.WriteLine(sourceData);
+            //Console.WriteLine(sourceData);
             string[] splitSourceData = sourceData.Split(' ');
             string mainCommand = splitSourceData.First();
             splitSourceData = splitSourceData.Skip(1).ToArray();
