@@ -7,30 +7,19 @@ namespace Hanabi
 {
     class Card
     {
-        private CardColor mColor;
+       private CardColor mColor;
         private int mRank;
         private string mName;
         private bool mColorVisible;
         private bool mRankVisible;
-        private List<CardColor?> mNoColors;
-        private List<int?> mNoRanks;
+        private List<CardColor> mNoColors;
+        private List<int> mNoRanks;
 
-        public Card(CardColor color,int rank,string name)
+        public Card(string name)
         {
-            mColor = color;
-            mRank = rank;
             mName = name;
-        }
-
-        public Card(char color, char rank)
-        {
-            mColor = (CardColor)color;
-            mRank = (int)Char.GetNumericValue(rank);
-            mName = String.Concat(color, rank);
-            mColorVisible = false;
-
-            mNoColors = new List<CardColor?>();
-            mNoRanks = new List<int?>();
+            mColor = (CardColor)name[0];
+            mRank = (int)char.GetNumericValue(name[1]);
         }
 
         public CardColor Color
@@ -97,14 +86,14 @@ namespace Hanabi
                 }
             }
         }
-        public List<CardColor?> NoColors
+        public List<CardColor> NoColors
         {
             get
             {
                 return mNoColors;
             }
         }
-        public List<int?> NoRanks
+        public List<int> NoRanks
         {
             get
             {

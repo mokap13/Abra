@@ -9,175 +9,232 @@ namespace Hanabi
 {
     static class Input
     {
-        /// <summary>
-        /// Разделитель
-        /// </summary>
-        private static char DELIMITER = ' ';
-        /// <summary>
-        /// Множество возможных цветов в строковом представлении
-        /// </summary>
-        private static string[] cardColors = new string[] { "Red", "Green", "Blue", "Yellow", "White" };
-        /// <summary>
-        /// Множество возможных рангов в строковом представлении 
-        /// </summary>
-        private static string[] cardRanks = new string[] { "1", "2", "3", "4", "5" };
-        /// <summary>
-        /// Множество возможных команд в строковом представлении
-        /// </summary>
-        private static string[] commands = { "Start", "new", "game", "with", "deck", "Dropcard", "Playcard", "Tellcolor", "Tellrank" };
+        private delegate void PlayerAction(int cardNumber);
 
-        private static CommandName? DefineCommandName(string sourceName)
+        private static Deck GetDeckFromString(this string[] sourceData)
         {
-            if (commands.Contains(sourceName) == false)
-                return null;
-
-            CommandName commandName = (CommandName)Enum.Parse(typeof(CommandName), sourceName);
-            return commandName;
-        }
-        /// <summary>
-        /// Приводит тип string к CardColor
-        /// </summary>
-        /// <param name="sourceName">Представление цвета карты(string)</param>
-        /// <returns>Представление цвета карты(CardColor)</returns>
-        private static CardColor? DefineColor(string sourceName)
-        {
-            if (cardColors.Contains(sourceName) == false)
-                return null;
-            const int FIRST_CHAR_COLOR = 0;
-            CardColor color = (CardColor)sourceName[FIRST_CHAR_COLOR];
-            return color;
-        }
-        /// <summary>
-        /// Приводит тип string к CardRank
-        /// </summary>
-        /// <param name="sourceName">Представление ценности карты(string)</param>
-        /// <returns>Представление ценности карты(CardRank)</returns>
-        private static int? DefineRank(string sourceName)
-        {
-            if (cardRanks.Contains(sourceName) == false)
-                return null;
-            const int FIRST_CHAR_RANK = 0;
-            int rank = (int)Char.GetNumericValue(sourceName[FIRST_CHAR_RANK]);
-            return rank;
+            List<Card> inputDeck = new List<Card>();
+            for (int i = 0; i < sourceData.Length; i++)
+            {
+                inputDeck.Add(new Card(sourceData[i]));
+            }
+            return new Deck(inputDeck);
         }
 
-        private static int GetIndex(this string[] sourceText, string text)
+        private static bool IsValidCardName(string sourceData)
+        {
+            char[] validColors = { 'R', 'G', 'B', 'Y', 'W' };
+            char[] validRanks = { '1', '2', '3', '4', '5' };
+            if (validColors.Contains(sourceData[0])
+                && validRanks.Contains(sourceData[1]))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsValidCardNumber(string sourceData)
+        {
+            char[] validNumbers = { '0', '1', '2', '3', '4' };
+            if (validNumbers.Contains(sourceData[0]))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsValidCardColor(string sourceData)
+        {
+            string[] validColors = { "Red", "Green", "Blue", "White", "Yellow" };
+            if (validColors.Contains(sourceData))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsValidCardRank(string sourceData)
+        {
+            string[] validRanks = { "1", "2", "3", "4", "5" };
+            if (validRanks.Contains(sourceData))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsValidCommandCard(string[] sourceData)
+        {
+            if (sourceData.Count() == 1
+                && IsValidCardNumber(sourceData.First()))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsValidCommandCards(string[] sourceData)
+        {
+            if (sourceData.Length < 0
+                && sourceData.Length > 4)
+                return false;
+
+            for (int i = 0; i < sourceData.Length; i++)
+            {
+                if (!IsValidCardNumber(sourceData[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsValidCommandColor(string[] sourceData)
+        {
+            if (sourceData.Length == 1
+                && IsValidCardColor(sourceData.First()))
+                return true;
+
+            return false;
+        }
+
+        private static bool IsValidCommandRank(string[] sourceData)
+        {
+            if (sourceData.Length == 1
+                && IsValidCardRank(sourceData.First()))
+                return true;
+
+            return false;
+        }
+
+        private static int? GetIndex(this string[] sourceText, string text)
         {
             for (int i = 0; i < sourceText.Length; i++)
             {
                 if (sourceText[i] == text)
+                {
                     return i;
+                }
             }
-            return sourceText.Length;
+            return null;
         }
 
-        public static Deck ReadMainDeck(GameField gameField, string sourceData)
+        private static int[] ToCardsNumbers(this string[] sourceData)
         {
-            //Console.WriteLine(sourceData);
-            Deck mainDeck = gameField.mainDeck;
+            const int NUMBER_OF_COMMANDS = 2;
+            string[] commands = sourceData.Take(NUMBER_OF_COMMANDS).ToArray();
+            sourceData = sourceData.Skip(NUMBER_OF_COMMANDS).ToArray();
 
-            const int CARD_COLOR_SOCKET = 0;
-            const int CARD_VALUE_SOCKET = 1;
-            
-            string[] sourceDataArray = null;
-
-            while (true)
+            if (commands[0].Contains("for") && commands[1].Contains("cards"))
             {
-                if (sourceData.Contains("Start new game with deck "))
+                if (IsValidCommandCards(sourceData))
                 {
-                    //Преобразуем входную строку в массив, используя 'Space' как разделитель
-                    sourceDataArray = sourceData.Split(DELIMITER);
+                    return sourceData.ToIntArray();
+                }
+            }
+            else
+            {
+                throw new Exception("Command don't contain " + commands);
+            }
+            return null;
+        }
 
-                    foreach (string data in sourceDataArray)
-                    {
-                        if (commands.Contains(data))
-                            continue;
+        private static int ToInt(this string[] sourceData)
+        {
+            int number = int.Parse(sourceData.First());
+            return number;
+        }
 
-                        Card card = new Card(data[CARD_COLOR_SOCKET], data[CARD_VALUE_SOCKET]);
-                        mainDeck.Cards.Add(card);
-                    }
-                    return mainDeck;
+        private static CardColor ToCardColor(this string[] sourceData)
+        {
+            CardColor cardColor = (CardColor)Enum.Parse(typeof(CardColor), sourceData.First());
+            return cardColor;
+        }
+
+        private static int[] ToIntArray(this string[] sourceArray)
+        {
+            int[] distantArrray = new int[sourceArray.Length];
+            for (int i = 0; i < sourceArray.Length; i++)
+            {
+                distantArrray[i] = int.Parse(sourceArray[i]);
+            }
+            return distantArrray;
+        }
+
+        private static Command Start(string[] sourceData)
+        {
+            string commandName = "deck";
+            int? firstDataIndex = sourceData.GetIndex(commandName) + 1;
+
+            if (!firstDataIndex.HasValue)
+            {
+                throw new Exception("Command is don't contain " + commandName);
+            }
+
+            int dataIndex = firstDataIndex.Value;
+
+            sourceData = sourceData.Skip(dataIndex).ToArray();
+            sourceData = sourceData.TakeWhile(check => IsValidCardName(check)).ToArray();
+
+            return new Command(commandName, sourceData.GetDeckFromString());
+        }
+
+        private static Command PutCard(string mainNameCommand, string[] sourceData)
+        {
+            string commandName = sourceData.First();
+            sourceData = sourceData.Skip(1).ToArray();
+
+            if (commandName == "card")
+                if (IsValidCommandCard(sourceData))
+                {
+                    int cardIndex = ToInt(sourceData);
+                    return new Command(mainNameCommand, cardIndex);
                 }
                 else
                 {
-                    Console.WriteLine("Команда не корректна");
-                    Console.ReadLine();
+                    throw new Exception("Command after '" + commandName + "' is incorrect");
                 }
-            }
-        }
-        /// <summary>
-        /// Читает из входного потока введенную пользователем команду
-        /// </summary>
-        /// <returns>Команда</returns>
-        public static Command ReadCommand(string sourceData)
-        {
-            //Console.WriteLine(">" + sourceData);
-            const int INDEX_CHOOSED_VALUE = 2;
-            const int INDEX_CHOOSED_CARDS = 5;
-            //Ввод данных из консоли
-            //Console.Write(">");
-            //string sourceData = Console.ReadLine();
-            string[] splitData = sourceData.Split(DELIMITER);
-            
-            #region Параметры команды
-            Command command;
-            int[] choosedCards = null;
-            CardColor? cardColor = null;
-            int? cardRank = null;
-            CommandName? commandName = null;
-            int numbersChoosedCards; 
-            #endregion
-
-            commandName = DefineCommandName(splitData[0] + splitData[1]);
-
-            if (commandName == null)
-            {
-                Console.WriteLine("Command incorrect");
-                Console.ReadLine();
-                return null;
-            }
-
-            #region Play and Drop
-            if (commandName == CommandName.Playcard || commandName == CommandName.Dropcard)
-            {
-                numbersChoosedCards = splitData.Length - INDEX_CHOOSED_VALUE;
-                choosedCards = new int[numbersChoosedCards];
-                choosedCards[0] = int.Parse(splitData[INDEX_CHOOSED_VALUE]);
-            } 
-            #endregion
-            #region Tellcolor and Tellrank
-            if (commandName == CommandName.Tellcolor || commandName == CommandName.Tellrank)
-            {
-                cardColor = DefineColor(splitData[INDEX_CHOOSED_VALUE]);
-                cardRank = DefineRank(splitData[INDEX_CHOOSED_VALUE]);
-
-                numbersChoosedCards = splitData.Length - INDEX_CHOOSED_CARDS;
-                choosedCards = new int[numbersChoosedCards];
-
-                for (int i = INDEX_CHOOSED_CARDS; i < splitData.Length; i++)
-                {
-                    choosedCards[i - INDEX_CHOOSED_CARDS] = int.Parse(splitData[i]);
-                }
-            } 
-            #endregion
-
-            command = new Command(commandName, choosedCards, cardColor, cardRank);
-            return command;
+            else
+                throw new Exception("Command is don't contain " + commandName);
         }
 
-        public static void NewReadCommand()
+        private static Command Tell(string[] sourceData)
         {
-            string sourceData = "Start new game with deck R1 G2 B3 W4 Y5 R1 R1 B1 B2 W1 W2 W1";
+            string commandName = sourceData.First();
+            sourceData = sourceData.Skip(1).ToArray();
+            int[] cardNumbers;
+
+            switch (commandName)
+            {
+                case "color":
+                    CardColor cardColor = sourceData.ToCardColor();
+                    sourceData = sourceData.Skip(1).ToArray();
+                    cardNumbers = sourceData.ToCardsNumbers();
+                    return new Command(commandName, cardNumbers, cardColor);
+                case "rank":
+                    int cardRank = sourceData.ToInt();
+                    sourceData = sourceData.Skip(1).ToArray();
+                    cardNumbers = sourceData.ToCardsNumbers();
+                    return new Command(commandName, cardNumbers, cardRank);
+                default:
+                    throw new Exception("Command is don't contain " + commandName);
+            }
+        }
+
+        public static Command ParseCommand(string sourceData)
+        {
+           // string sourceData = "Drop choosedCard 4";
             string[] splitSourceData = sourceData.Split(' ');
-
-            Console.WriteLine();
+            string mainCommand = splitSourceData.First();
+            splitSourceData = splitSourceData.Skip(1).ToArray();
+            
+            switch (mainCommand)
+            {
+                case "Start":
+                    return Start(splitSourceData);
+                case "Play":
+                    return PutCard(mainCommand, splitSourceData);
+                case "Drop":
+                    return PutCard(mainCommand, splitSourceData);
+                case "Tell":
+                    return Tell(splitSourceData);
+                default:
+                    throw new Exception("Main command is incorrect");
+            }
         }
-    }
-    enum NewMainCommand
-    {
-        Start = "Start",
-        Play = "Play",
-        Drop = "Drop",
-        Tell = "Tell"
     }
 }

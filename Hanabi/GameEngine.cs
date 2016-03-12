@@ -20,7 +20,7 @@ namespace Hanabi
         public GameEngine()
         {
             mGameField = new GameField();
-
+            
             mPlayerA = new Player();
             mPlayerB = new Player();
             mGameField.currentPlayer = mPlayerA;
@@ -33,27 +33,17 @@ namespace Hanabi
         /// <summary>
         /// Начинает игру
         /// </summary>
-        public void StartGame(string[] sourceData, ref int j)
+        public void StartGame(string[] sourceData)
         {
-            mGameField.mainDeck = Input.ReadMainDeck(mGameField, sourceData[j]);
-            j++;
-            #region Игроки берут по 5 карт из основной колоды
-            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
-            {
-                mPlayerA.TakeCardFromDeck(mGameField.mainDeck);
-            }
-            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
-            {
-                mPlayerB.TakeCardFromDeck(mGameField.mainDeck);
-            }
-            #endregion
-
+            int i = 0;
             while (mGameField.finished == false)
             {
                 Output.ShowGameStatus(mGameField);
-                mCommand = Input.ReadCommand(sourceData[j]);
-
-                if (mGameField.finished == false && TryExecuteCommand(mGameField, mCommand) == true && mGameField.mainDeck.Count > 0)
+                mCommand = Input.ParseCommand(sourceData[i]);
+                
+                if (mGameField.finished == false
+                    && TryExecuteCommand(mCommand,mGameField) == true
+                    && mGameField.mainDeck.Count > 0)
                 {
                     MakeMove(mGameField);
                 }
@@ -63,8 +53,8 @@ namespace Hanabi
                     mGameField.finished = true;
                     Output.ShowGameStatus(mGameField);
                 }
-                j++;
-            } 
+                i++;
+            }
         }
         /// <summary>
         /// Возвращает true, если действие игрока не нарушает правил игры и 
@@ -73,59 +63,56 @@ namespace Hanabi
         /// <param name="gameField"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        private bool TryExecuteCommand(GameField gameField, Command command)
+        private bool TryExecuteCommand(Command command, GameField gameField)
         {
-            Card choosedCard;
-            switch (command.CommandName)
+            Player currentPlayer = gameField.currentPlayer;
+            Player nextPlayer = gameField.nextPlayer;
+            Deck tableDeck = gameField.tableDeck;
+            //Card choosedCard = currentPlayer.Deck[command.CardIndex];
+
+            switch (command.Name)
             {
-                #region Playcard
-                case CommandName.Playcard:
-                    choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
-                    //Ранг выбранной карты должен быть на 1 выше ранга карты колоды стола
-                    
-                    if ((int)choosedCard.Rank - 1 == gameField.tableDeck.GetMaxRank(choosedCard.Color))
+                case "deck":
+                    if (IsValidStart(command.Deck))
                     {
-                        if (CheckRisk(gameField, choosedCard) == true)
-                        {
-                            gameField.risk++;
-                        }
-                            
-                        gameField.currentPlayer.PlayCard(gameField, command);
-                        gameField.score++;
+                        gameField.mainDeck = command.Deck;
+                        TakeStartDeck();
                         return true;
                     }
-                    else
+                    return false;
+                case "Play":
+                    if (IsValidPlayCard(currentPlayer.Deck[command.CardIndex], tableDeck))
                     {
-                        gameField.currentPlayer.DropCard(gameField, command);
-                        return false;
-                    } 
-                #endregion
-                #region Dropcard
-                case CommandName.Dropcard:
-                    choosedCard = gameField.currentPlayer.Deck.Cards[command.ChoosedCards[0]];
-                    gameField.currentPlayer.DropCard(gameField, command);
-                    return true;
-                #endregion
-                #region Tellcolor
-                case CommandName.Tellcolor:
-                    int numberCardsOneColor = gameField.nextPlayer.Deck.GetNumberColor(command.CardColor);
-                    if (numberCardsOneColor != command.ChoosedCards.Length)
-                        return false;
-                    if (gameField.nextPlayer.Deck.CheckColor(command.CardColor, command.ChoosedCards) == false)
-                        return false;
-                    gameField.nextPlayer.Deck.ChangeStatusColorVisible(command.CardColor, command.ChoosedCards);
-                    return true;
-                #endregion
-                #region Tellrank
-                case CommandName.Tellrank:
-                    int numberCardsOneRank = gameField.nextPlayer.Deck.GetNumberRank(command.CardRank);
-                    if (numberCardsOneRank != command.ChoosedCards.Length)
-                        return false;
-                    if (gameField.nextPlayer.Deck.CheсkRank(command.CardRank, command.ChoosedCards) == false)
-                        return false;
-                    gameField.nextPlayer.Deck.ChangeStatusRankVisible(command.CardRank, command.ChoosedCards);
-                    return true;
-                #endregion
+                        if (CheckRisk(currentPlayer.Deck[command.CardIndex], tableDeck)
+                            &&gameField.finished == false)
+                                gameField.risk++;
+                        currentPlayer.PlayCard(command.CardIndex, gameField.tableDeck);
+                        currentPlayer.TakeCardFromDeck(gameField.mainDeck);
+                        return true;
+                    }
+                    return false;
+                case "Drop":
+                    if (IsValidDropCard(currentPlayer.Deck[command.CardIndex], tableDeck))
+                    {
+                        currentPlayer.DropCard(command.CardIndex);
+                        currentPlayer.TakeCardFromDeck(gameField.mainDeck);
+                        return true;
+                    }
+                    return false;
+                case "color":
+                    if (IsValidTellColor(command, nextPlayer.Deck))
+                    {
+                        currentPlayer.TellColor(command, nextPlayer.Deck);
+                        return true;
+                    }
+                    return false;
+                case "rank":
+                    if (IsValidTellRank(command, nextPlayer.Deck))
+                    {
+                        currentPlayer.TellRank(command, nextPlayer.Deck);
+                        return true;
+                    }
+                    return false;
                 default:
                     return false;
             }
@@ -143,25 +130,25 @@ namespace Hanabi
             gameField.UpdatePlayerStatus();
         }
 
-        private bool CheckRisk(GameField gameField, Card card)
+        private bool CheckRisk(Card choosedCard, Deck tableDeck)
         {
-            List<CardColor?> tableNoColors = new List<CardColor?>();
-            tableNoColors = gameField.tableDeck.GetNoColorsForRank(card.Rank - 1);
-            
-            if (gameField.finished == true)
+            List<CardColor> tableNoColors = new List<CardColor>();
+            tableNoColors = tableDeck.GetNoColorsForRank(choosedCard.Rank - 1);
+
+            //if (gameField.finished == true)
+            //    return false;
+
+            if (choosedCard.CardVisible == true)
                 return false;
 
-            if (card.CardVisible == true)
-                return false;
-
-            if (card.RankVisible == false)
+            if (choosedCard.RankVisible == false)
             {
                 return true;
             }
 
-            foreach (CardColor? color in tableNoColors)
+            foreach (CardColor color in tableNoColors)
             {
-                if (card.NoColors.Contains(color) == false)
+                if (choosedCard.NoColors.Contains(color) == false)
                 {
                     return true;
                 }
@@ -169,8 +156,72 @@ namespace Hanabi
                 {
                     continue;
                 }
-            } 
+            }
             return false;
+        }
+
+        private bool IsValidStart(Deck mainDeck)
+        {
+            if (mainDeck.Count > 10)
+                return true;
+            return false;
+        }
+
+        private bool IsValidPlayCard(Card choosedCard, Deck tableDeck)
+        {
+            if (choosedCard.Rank - 1 == tableDeck.GetMaxRank(choosedCard.Color))
+                return true;
+
+            return false;
+        }
+
+        private bool IsValidDropCard(Card choosedCard, Deck tableDeck)
+        {
+            return true;
+        }
+
+        private bool IsValidTellColor(Command command, Deck nextPlayerDeck)
+        {
+            int[] cardIndexes = command.CardIndexes;
+            CardColor cardColor = command.CardColor;
+            //Проверяем кол-во указанных карт заданного цвета и кол-во имеющихся карт заданного цвета
+            if (cardIndexes.Length != nextPlayerDeck.GetCountCardForColor(cardColor))
+                return false;
+            //Проверяем соответствие заданного цвета и цвет имеющихся карт
+            for (int i = 0; i < cardIndexes.Length; i++)
+            {
+                if (cardColor != nextPlayerDeck.Cards[i].Color)
+                    return false;
+            }
+            return true;
+        }
+
+        private bool IsValidTellRank(Command command, Deck nextPlayerDeck)
+        {
+            int[] cardIndexes = command.CardIndexes;
+            int cardRank = command.CardRank;
+            //Проверяем кол-во указанных карт заданного цвета и кол-во имеющихся карт заданного цвета
+            if (cardIndexes.Length != nextPlayerDeck.GetCountCardForRank(cardRank))
+                return false;
+            //Проверяем соответствие заданного цвета и цвет имеющихся карт
+            for (int i = 0; i < cardIndexes.Length; i++)
+            {
+                if (cardRank != nextPlayerDeck.Cards[i].Rank)
+                    return false;
+            }
+            return true;
+        }
+
+        private void TakeStartDeck()
+        {
+            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
+            {
+                mPlayerA.TakeCardFromDeck(mGameField.mainDeck);
+            }
+            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
+            {
+                mPlayerB.TakeCardFromDeck(mGameField.mainDeck);
+            }
         }
     }
 }

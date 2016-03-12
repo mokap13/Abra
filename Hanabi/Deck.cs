@@ -23,6 +23,11 @@ namespace Hanabi
             mCards = cards;
         }
 
+        public Deck(List<Card> cards)
+        {
+            mCards = new List<Card>();
+        }
+
         public string Name
         {
             get
@@ -48,7 +53,7 @@ namespace Hanabi
         /// </summary>
         /// <param name="cardColor">Цвет карты</param>
         /// <returns>Колличество карт с заданным цветом</returns>
-        public int GetNumberColor(CardColor? cardColor)
+        public int GetCountCardForColor(CardColor cardColor)
         {
             int count = 0;
 
@@ -64,7 +69,7 @@ namespace Hanabi
         /// </summary>
         /// <param name="cardRank">Ранг карты</param>
         /// <returns>Колличество карт с заданным рангом</returns>
-        public int GetNumberRank(int? cardRank)
+        public int GetCountCardForRank(int cardRank)
         {
             int count = 0;
 
@@ -76,7 +81,7 @@ namespace Hanabi
             return count;
         }
 
-        public bool CheckColor(CardColor? cardColor, int[] choosedCards)
+        public bool CheckColor(CardColor cardColor, int[] choosedCards)
         {
             for (int i = 0; i < choosedCards.Length; i++)
             {
@@ -88,7 +93,7 @@ namespace Hanabi
             return true;
         }
 
-        public bool CheсkRank(int? cardRank, int[] choosedCards)
+        public bool CheсkRank(int cardRank, int[] choosedCards)
         {
             for (int i = 0; i < choosedCards.Length; i++)
             {
@@ -100,7 +105,7 @@ namespace Hanabi
             return true;
         }
 
-        public void ChangeStatusColorVisible(CardColor? cardColor, int[] choosedCards)
+        public void ChangeStatusColorVisible(CardColor cardColor, int[] choosedCards)
         {
             //Меняет статус видимости цвета если другой игрок рассказал о нем
             for (int i = 0; i < choosedCards.Length; i++)
@@ -115,7 +120,7 @@ namespace Hanabi
             {
                 if (choosedCards.Contains(i) == false)
                 {
-                    if(mCards[i].NoColors.Contains(cardColor) == false)
+                    if (mCards[i].NoColors.Contains(cardColor) == false)
                         mCards[i].NoColors.Add(cardColor);
                     if (mCards[i].NoColors.Count == 4)
                         mCards[i].ColorVisible = true;
@@ -123,7 +128,7 @@ namespace Hanabi
             }
         }
 
-        public void ChangeStatusRankVisible(int? cardRank, int[] choosedCards)
+        public void ChangeStatusRankVisible(int cardRank, int[] choosedCards)
         {
             for (int i = 0; i < choosedCards.Length; i++)
             {
@@ -202,9 +207,9 @@ namespace Hanabi
             return count;
         }
 
-        public List<CardColor?> GetColorsForRank(int? cardRank)
+        public List<CardColor> GetColorsForRank(int cardRank)
         {
-            List<CardColor?> listColors = new List<CardColor?>();
+            List<CardColor> listColors = new List<CardColor>();
             foreach (Card card in mCards)
             {
                 if (card.Rank == cardRank)
@@ -215,9 +220,9 @@ namespace Hanabi
             return listColors;
         }
 
-        public List<CardColor?> GetNoColorsForRank(int? cardRank)
+        public List<CardColor> GetNoColorsForRank(int cardRank)
         {
-            List<CardColor?> listColors = new List<CardColor?>();
+            List<CardColor> listColors = new List<CardColor>();
             foreach (Card card in mCards)
             {
                 if (card.Rank != cardRank)
@@ -226,6 +231,12 @@ namespace Hanabi
                 }
             }
             return listColors;
+        }
+
+        public Card this[int index]
+        {
+            get { return mCards[index]; }
+            set { mCards[index] = value; }
         }
 
         public int Count

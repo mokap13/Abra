@@ -8,59 +8,62 @@ namespace Hanabi
 {
     class Command
     {
-        private CommandName? mCommandName;
-        private int[] mChoosedCards;
-        private CardColor? mCardColor;
-        private int? mCardRank;
+        private int[] mCardIndexes;
+        private int mCardIndex;
+        private CardColor mCardColor;
+        private int mCardRank;
         private Deck mDeck;
+        private string mName;
 
-        public Command(CommandName? commandName, Deck deck)
+        public Command(Deck deck)
         {
-            mCommandName = commandName;
+            mDeck = new Deck();
+        }
+
+        public Command(string name, Deck deck)
+        {
+            mDeck = new Deck();
+            mName = name;
             mDeck = deck;
         }
 
-        public Command(CommandName? commandName, int[] choosedCards, CardColor? color)
+        public Command(string Name, int cardIndex)
         {
-            mCommandName = commandName;
+            mName = Name;
+            mCardIndex = cardIndex;
+        }
+
+        public Command(string Name, int[] choosedCards, CardColor color)
+        {
             mCardColor = color;
-            mChoosedCards = choosedCards;
+            mCardIndexes = choosedCards;
         }
 
-        public Command(CommandName? commandName, int[] choosedCards, int? rank)
+        public Command(string Name, int[] choosedCards, int rank)
         {
-            mCommandName = commandName;
             mCardRank = rank;
-            mChoosedCards = choosedCards;
+            mCardIndexes = choosedCards;
         }
 
-        public Command(CommandName? commandName, int[] choosedCards, CardColor? color, int? rank)
-        {
-            mCommandName = commandName;
-            mChoosedCards = choosedCards;
-            mCardRank = rank;
-            mCardColor = color;
-        }
-
-        public CommandName? CommandName
+        public int[] CardIndexes
         {
             get
             {
-                return mCommandName;
+                return mCardIndexes;
             }
         }
 
-        public int[] ChoosedCards
+        public int CardIndex
         {
             get
             {
-                return mChoosedCards;
+                return mCardIndex;
             }
         }
         /// <summary>
         /// Цвет карты
         /// </summary>
-        public CardColor? CardColor
+        public CardColor CardColor
         {
             get
             {
@@ -70,7 +73,7 @@ namespace Hanabi
         /// <summary>
         /// Ранг карты
         /// </summary>
-        public int? CardRank
+        public int CardRank
         {
             get
             {
@@ -89,16 +92,13 @@ namespace Hanabi
                 Deck = value;
             }
         }
-    }
-    /// <summary>
-    /// Имя команды
-    /// </summary>
-    public enum CommandName
-    {
-        Playcard,
-        Dropcard,
-        Tellcolor,
-        Tellrank,
-        Startnew
+
+        public string Name
+        {
+            get
+            {
+                return mName;
+            }
+        }
     }
 }

@@ -30,11 +30,11 @@ namespace Hanabi
             mainDeck = new Deck();
             tableDeck = new Deck();
             garbageDeck = new Deck();
-            tableDeck.Cards.Add(new Card('R', '0'));
-            tableDeck.Cards.Add(new Card('G', '0'));
-            tableDeck.Cards.Add(new Card('B', '0'));
-            tableDeck.Cards.Add(new Card('W', '0'));
-            tableDeck.Cards.Add(new Card('Y', '0'));
+            tableDeck.Cards.Add(new Card("R0"));
+            tableDeck.Cards.Add(new Card("G0"));
+            tableDeck.Cards.Add(new Card("B0"));
+            tableDeck.Cards.Add(new Card("W0"));
+            tableDeck.Cards.Add(new Card("Y0"));
             tableDeck.Name = "Table: ";
         }
 

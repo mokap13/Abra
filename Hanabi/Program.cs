@@ -16,7 +16,7 @@ namespace Hanabi
             for (int j = 0; j < sourceData.Length; )
             {
                 GameEngine gameEngine = new GameEngine();
-                gameEngine.StartGame(sourceData, ref j);
+                gameEngine.StartGame(sourceData);
             }
             Console.ReadLine();
         }

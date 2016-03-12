@@ -43,30 +43,26 @@ namespace Hanabi
             sourceDeck.Cards.RemoveAt(0);
         }
 
-        public void PlayCard(GameField gameField, Command command)
+        public void PlayCard(int cardNumber, Deck tableDeck)
         {
-            int choosedCard = (int)command.ChoosedCards[0];
-            Card pullCard = mDeck.PullIndexCard(choosedCard);
-            gameField.tableDeck.PushCardForColor(pullCard);
-            TakeCardFromDeck(gameField.mainDeck);
+            Card pullCard = mDeck.PullIndexCard(cardNumber);
+            tableDeck.PushCardForColor(pullCard);
         }
 
-        public void DropCard(GameField gameField, Command command)
+        public void DropCard(int cardNumber)
         {
-            int choosedCard = (int)command.ChoosedCards[0];
-            Card pullCard = mDeck.PullIndexCard(choosedCard);
+            Card pullCard = mDeck.PullIndexCard(cardNumber);
             mDropDeck.PushCardForColor(pullCard);
-            TakeCardFromDeck(gameField.mainDeck);
         }
 
-        public void TellColor(GameField gameField, Command command)
+        public void TellColor(Command command, Deck nextPlayerDeck)
         {
-            Console.WriteLine();
+            nextPlayerDeck.ChangeStatusColorVisible(command.CardColor, command.CardIndexes);
         }
 
-        public void TellRank(GameField gameField, Command command)
+        public void TellRank(Command command, Deck nextPlayerDeck)
         {
-            Console.WriteLine();
+            nextPlayerDeck.ChangeStatusRankVisible(command.CardRank, command.CardIndexes);
         }
     }
 }
