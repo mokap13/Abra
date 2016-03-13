@@ -1,49 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace hanabiabra
 {
     class Command
     {
+        private string mName;
         private int[] mCardIndexes;
         private int mCardIndex;
         private CardColor mCardColor;
         private int mCardRank;
         private Deck mDeck;
-        private string mName;
-
-        public Command(Deck deck)
-        {
-            mDeck = deck;
-        }
-
+        
+        /// <param name="name">Имя команды</param>
+        /// <param name="deck">Колода карт</param>
         public Command(string name, Deck deck)
         {
             mName = name;
             mDeck = deck;
         }
-
-        public Command(string Name, int cardIndex)
+        
+        /// <param name="name">Имя команды</param>
+        /// <param name="cardIndex">Номер карты</param>
+        public Command(string name, int cardIndex)
         {
-            mName = Name;
+            mName = name;
             mCardIndex = cardIndex;
         }
-
-        public Command(string Name, int[] choosedCards, CardColor color)
+        
+        /// <param name="name">Имя команды</param>
+        /// <param name="cardIndexes">Номера карт</param>
+        /// <param name="color">Цвет карты</param>
+        public Command(string name, int[] cardIndexes, CardColor color)
         {
-            mName = Name;
+            mName = name;
             mCardColor = color;
-            mCardIndexes = choosedCards;
+            mCardIndexes = cardIndexes;
+        }
+        
+        /// <param name="name">Имя команды</param>
+        /// <param name="cardIndexes">Номера карт</param>
+        /// <param name="rank">Ранг карты</param>
+        public Command(string name, int[] cardIndexes, int rank)
+        {
+            mName = name;
+            mCardRank = rank;
+            mCardIndexes = cardIndexes;
         }
 
-        public Command(string Name, int[] choosedCards, int rank)
+        public string Name
         {
-            mName = Name;
-            mCardRank = rank;
-            mCardIndexes = choosedCards;
+            get
+            {
+                return mName;
+            }
         }
 
         public int[] CardIndexes
@@ -61,9 +69,7 @@ namespace hanabiabra
                 return mCardIndex;
             }
         }
-        /// <summary>
-        /// Цвет карты
-        /// </summary>
+        
         public CardColor CardColor
         {
             get
@@ -71,9 +77,7 @@ namespace hanabiabra
                 return mCardColor;
             }
         }
-        /// <summary>
-        /// Ранг карты
-        /// </summary>
+        
         public int CardRank
         {
             get
@@ -87,18 +91,6 @@ namespace hanabiabra
             get
             {
                 return mDeck;
-            }
-            set
-            {
-                mDeck = value;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return mName;
             }
         }
     }

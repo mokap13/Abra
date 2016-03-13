@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace hanabiabra
 {
@@ -36,33 +32,44 @@ namespace hanabiabra
                 mDropDeck = value;
             }
         }
-
+        /// <summary>
+        /// Игрок перекладывает карту из указанной колоды в 
+        /// свою колоду
+        /// </summary>
         public void TakeCardFromDeck(Deck sourceDeck)
         {
             mDeck.Cards.Add(sourceDeck.Cards.First());
             sourceDeck.Cards.RemoveAt(0);
         }
-
-        public void PlayCard(int cardNumber, Deck tableDeck)
+        /// <summary>
+        /// Игрок разыгрывает карту с указанным индексом
+        /// </summary>
+        public void PlayCard(int cardIndex, Deck tableDeck)
         {
-            Card pullCard = mDeck.PullIndexCard(cardNumber);
+            Card pullCard = mDeck.PullIndexCard(cardIndex);
             tableDeck.PushCardForColor(pullCard);
         }
-
-        public void DropCard(int cardNumber)
+        /// <summary>
+        /// Игрок сбрасывает карту с указанным индексом
+        /// </summary>
+        public void DropCard(int cardIndex)
         {
-            Card pullCard = mDeck.PullIndexCard(cardNumber);
+            Card pullCard = mDeck.PullIndexCard(cardIndex);
             mDropDeck.PushCardForColor(pullCard);
         }
-
+        /// <summary>
+        /// Игрок раскрывает опоненту цвет указанных карт
+        /// </summary>
         public void TellColor(Command command, Deck nextPlayerDeck)
         {
-            nextPlayerDeck.ChangeStatusColorVisible(command.CardColor, command.CardIndexes);
+            nextPlayerDeck.UpdateColorVisible(command.CardColor, command.CardIndexes);
         }
-
+        /// <summary>
+        /// Игрок раскрывает опоненту ранг указанных карт
+        /// </summary>
         public void TellRank(Command command, Deck nextPlayerDeck)
         {
-            nextPlayerDeck.ChangeStatusRankVisible(command.CardRank, command.CardIndexes);
+            nextPlayerDeck.UpdateRankStatus(command.CardRank, command.CardIndexes);
         }
     }
 }

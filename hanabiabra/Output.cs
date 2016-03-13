@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace hanabiabra
 {
@@ -21,7 +17,11 @@ namespace hanabiabra
                 Console.Write(card.Name + delimiter);
             }
         }
-
+        /// <summary>
+        /// Выводит в консоль последовательно видимые свойства карт, через заданный разделитель
+        /// </summary>
+        /// <param name="deck">Колода карт</param>
+        /// <param name="delimiter">Разделитель</param>
         public static void ShowDeckIf(Deck deck, char delimiter)
         {
             Console.Write("{0,18}", deck.Name);
@@ -38,10 +38,11 @@ namespace hanabiabra
                 Console.Write(delimiter);
             }
         }
-
+        /// <summary>
+        /// Выводит в консоль параметры игрового поля
+        /// </summary>
         public static void ShowGameStatus(GameField gameField)
         {
-            const char DELIMITER = ' ';
             int turn = gameField.turn;
             int score = gameField.score;
             int risk = gameField.risk;
@@ -65,25 +66,6 @@ namespace hanabiabra
             //ShowDeck(gameField.tableDeck, DELIMITER);
             //Console.Write("\n");
             //Console.WriteLine("-----------------------------------------------------");
-        }
-
-        public static void ShowGameOverStatus(GameField gameField)
-        {
-            const char DELIMITER = ' ';
-            int turn = gameField.turn;
-            int score = gameField.score;
-            int risk = gameField.risk;
-            bool finished = gameField.finished;
-
-            Player currentPlayer = gameField.currentPlayer;
-            Player nextPlayer = gameField.nextPlayer;
-
-            Console.WriteLine("Turn: {0}, cards: {1}, with risk: {2}", turn, score, risk);
-            Console.WriteLine("Turn: {0}, Score: {1}, Finished: {2}", turn, score, finished);
-
-            ShowDeck(currentPlayer.Deck, DELIMITER);
-            ShowDeck(nextPlayer.Deck, DELIMITER);
-            ShowDeck(gameField.tableDeck, DELIMITER);
         }
     }
 }

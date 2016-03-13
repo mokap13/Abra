@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace hanabiabra
 {
@@ -12,16 +8,20 @@ namespace hanabiabra
         static void Main(string[] args)
         {
             GameEngine gameEngine = null;
-            string[] sourceData = File.ReadAllLines(@"C:\TEST\1-2.in");
+            string[] sourceData = File.ReadAllLines(@"C:\TEST\2-big.in");
             
             for (int i = 0; i < sourceData.Length; i++)
             {
                 Command command = Input.ParseCommand(sourceData[i]);
-                if (command.Name == "deck")
+                if (command.Name == "Start")
                 {
                     gameEngine = new GameEngine();
+                    gameEngine.StartGame(command);
                 }
-                gameEngine.MoveMake(command);
+                else if(!gameEngine.Finished)
+                {
+                    gameEngine.MoveMake(command);
+                }
             }
             Console.ReadLine();
         }

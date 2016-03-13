@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace hanabiabra
 {
     class Card
     {
+        public const int COUNT_CARD_COLORS = 5;
+        public const int COUNT_CARD_RANKS = 5;
+        private int TRUE_CARD_VALUE = 1;
         private CardColor mColor;
         private int mRank;
         private string mName;
@@ -38,13 +37,6 @@ namespace hanabiabra
             {
                 return mRank;
             }
-            set
-            {
-                if (value <= 5 && value >= 0)
-                {
-                    Rank = value;
-                }
-            }
         }
         public string Name
         {
@@ -57,6 +49,9 @@ namespace hanabiabra
         {
             get
             {
+                if (mNoColors.Count == COUNT_CARD_COLORS - TRUE_CARD_VALUE)
+                    mColorVisible = true;
+
                 return mColorVisible;
             }
             set
@@ -68,25 +63,24 @@ namespace hanabiabra
         {
             get
             {
+                if (mNoRanks.Count == COUNT_CARD_RANKS - TRUE_CARD_VALUE)
+                    return true;
+
                 return mRankVisible;
             }
             set
             {
-                mRankVisible = true;
+                mRankVisible = value;
             }
         }
         public bool CardVisible
         {
             get
             {
-                if (mColorVisible == true && mRankVisible == true)
-                {
+                if (ColorVisible && RankVisible)
                     return true;
-                }
                 else
-                {
                     return false;
-                }
             }
         }
         public List<CardColor> NoColors

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace hanabiabra
 {
@@ -49,10 +46,10 @@ namespace hanabiabra
         }
 
         /// <summary>
-        /// Возвращает колличество карт с заданным цветом
+        /// Возвращает колличество карт с указанным цветом
         /// </summary>
         /// <param name="cardColor">Цвет карты</param>
-        /// <returns>Колличество карт с заданным цветом</returns>
+        /// <returns>Колличество карт с указанным цветом</returns>
         public int GetCountCardForColor(CardColor cardColor)
         {
             int count = 0;
@@ -65,10 +62,10 @@ namespace hanabiabra
             return count;
         }
         /// <summary>
-        /// Возвращает колличество карт с заданным рангом
+        /// Возвращает колличество карт с указанным рангом
         /// </summary>
         /// <param name="cardRank">Ранг карты</param>
-        /// <returns>Колличество карт с заданным рангом</returns>
+        /// <returns>Колличество карт с указанным рангом</returns>
         public int GetCountCardForRank(int cardRank)
         {
             int count = 0;
@@ -80,102 +77,81 @@ namespace hanabiabra
             }
             return count;
         }
-
-        public bool CheckColor(CardColor cardColor, int[] choosedCards)
+        /// <summary>
+        /// Возвращает true если карты с указанными номерами имееют указанный цвет, иначе false
+        /// </summary>
+        /// <param name="cardColor">Цвет карты</param>
+        /// <param name="cardIndexes">Индекс карты</param>
+        public bool CheckColor(CardColor cardColor, int[] cardIndexes)
         {
-            for (int i = 0; i < choosedCards.Length; i++)
+            for (int i = 0; i < cardIndexes.Length; i++)
             {
-                if (cardColor != mCards[choosedCards[i]].Color)
+                if (cardColor != mCards[cardIndexes[i]].Color)
                 {
                     return false;
                 }
             }
             return true;
         }
-
-        public bool CheсkRank(int cardRank, int[] choosedCards)
+        /// <summary>
+        /// Возвращает true если карты с указанными номерами имееют указанный ранг, иначе false
+        /// </summary>
+        /// <param name="cardRank">Ранг карты</param>
+        /// <param name="cardIndexes">Индекс карт</param>
+        /// <returns></returns>
+        public bool CheсkRank(int cardRank, int[] cardIndexes)
         {
-            for (int i = 0; i < choosedCards.Length; i++)
+            for (int i = 0; i < cardIndexes.Length; i++)
             {
-                if (cardRank != mCards[choosedCards[i]].Rank)
+                if (cardRank != mCards[cardIndexes[i]].Rank)
                 {
                     return false;
                 }
             }
             return true;
         }
-
-        public void ChangeStatusColorVisible(CardColor cardColor, int[] choosedCards)
+        /// <summary>
+        /// Обновляет статус видимости цвета
+        /// </summary>
+        /// <param name="cardColor">Цвет карты</param>
+        /// <param name="cardIndexes">Индексы карт</param>
+        public void UpdateColorVisible(CardColor cardColor, int[] cardIndexes)
         {
-            //Меняет статус видимости цвета если другой игрок рассказал о нем
-            for (int i = 0; i < choosedCards.Length; i++)
+            for (int i = 0; i < cardIndexes.Length; i++)
+			{
+                AddNoColor(cardColor, cardIndexes[i]);
+                if (CompareCardColor(cardColor, cardIndexes[i]))
+                    mCards[cardIndexes[i]].ColorVisible = true;
+                
+			}
+        }
+        /// <summary>
+        /// Обновляет статус видимости ранга
+        /// </summary>
+        /// <param name="cardRank">Ранг карты</param>
+        /// <param name="cardIndexes">Индексы карт</param>
+        public void UpdateRankStatus(int cardRank, int[] cardIndexes)
+        {
+            for (int i = 0; i < cardIndexes.Length; i++)
             {
-                if (cardColor == mCards[choosedCards[i]].Color)
-                {
-                    mCards[choosedCards[i]].ColorVisible = true;
-                }
-            }
-            //Меняет статус видимости цвета если цвет карты не является ни одним из других цветов
-            for (int i = 0; i < 5; i++)
-            {
-                if (choosedCards.Contains(i) == false)
-                {
-                    if (mCards[i].NoColors.Contains(cardColor) == false)
-                        mCards[i].NoColors.Add(cardColor);
-                    if (mCards[i].NoColors.Count == 4)
-                        mCards[i].ColorVisible = true;
-                }
+                AddNoRank(cardRank, cardIndexes[i]);
+                if (CompareCardRank(cardRank, cardIndexes[i]))
+                    mCards[cardIndexes[i]].RankVisible = true;
             }
         }
-
-        public void ChangeStatusRankVisible(int cardRank, int[] choosedCards)
-        {
-            for (int i = 0; i < choosedCards.Length; i++)
-            {
-                if (cardRank == mCards[choosedCards[i]].Rank)
-                {
-                    mCards[choosedCards[i]].RankVisible = true;
-                }
-            }
-            //Меняет статус видимости цвета если цвет карты не является ни одним из других цветов
-            for (int i = 0; i < 5; i++)
-            {
-                if (choosedCards.Contains(i) == false)
-                {
-                    if (mCards[i].NoRanks.Contains(cardRank) == false)
-                        mCards[i].NoRanks.Add(cardRank);
-                    if (mCards[i].NoRanks.Count == 4)
-                        mCards[i].RankVisible = true;
-                }
-            }
-        }
-
-        public bool ContainCard(Card choosedCard)
-        {
-            foreach (Card card in mCards)
-            {
-                if (card.Color == choosedCard.Color && card.Rank == choosedCard.Rank)
-                    return true;
-            }
-            return false;
-        }
-
-        public Card PullTopCard()
-        {
-            const int INDEX_TOP_CARD = 0;
-
-            Card pullCard = mCards.First();
-            mCards.RemoveAt(INDEX_TOP_CARD);
-            return pullCard;
-        }
-
+        /// <summary>
+        /// Извлекает карту из колоды по индексу
+        /// </summary>
+        /// <param name="cardIndex">Индекс карты в колоде</param>
         public Card PullIndexCard(int cardIndex)
         {
             Card pullCard = mCards[cardIndex];
             mCards.RemoveAt(cardIndex);
             return pullCard;
         }
-
+        /// <summary>
+        /// Заменяет в колоде карту, с идентичным цветом на выбранную карту 
+        /// </summary>
         public void PushCardForColor(Card choosedCard)
         {
             if (mCards.Count == 0)
@@ -186,14 +162,17 @@ namespace hanabiabra
             {
                 if (card.Color == choosedCard.Color)
                 {
-                    int thisCardIndex = mCards.IndexOf(card);
+                    int cardIndex = mCards.IndexOf(card);
                     mCards.Remove(card);
-                    mCards.Insert(thisCardIndex, choosedCard);
+                    mCards.Insert(cardIndex, choosedCard);
                     break;
                 }
             }
         }
-
+        /// <summary>
+        /// Получить максимальный ранг среди карт из колоды
+        /// указанного цвета
+        /// </summary>
         public int GetMaxRank(CardColor cardColor)
         {
             int count = 0;
@@ -206,20 +185,11 @@ namespace hanabiabra
             }
             return count;
         }
-
-        public List<CardColor> GetColorsForRank(int cardRank)
-        {
-            List<CardColor> listColors = new List<CardColor>();
-            foreach (Card card in mCards)
-            {
-                if (card.Rank == cardRank)
-                {
-                    listColors.Add(card.Color);
-                }
-            }
-            return listColors;
-        }
-
+        /// <summary>
+        /// Возвращает список цветов не характерных для карт указанного ранга
+        /// </summary>
+        /// <param name="cardRank"></param>
+        /// <returns></returns>
         public List<CardColor> GetNoColorsForRank(int cardRank)
         {
             List<CardColor> listColors = new List<CardColor>();
@@ -232,18 +202,74 @@ namespace hanabiabra
             }
             return listColors;
         }
-
+        
         public Card this[int index]
         {
             get { return mCards[index]; }
             set { mCards[index] = value; }
         }
-
+        /// <summary>
+        /// Возвращает кол-во карт в колоде
+        /// </summary>
         public int Count
         {
             get
             {
                 return mCards.Count;
+            }
+        }
+        /// <summary>
+        /// Возвращает true если указанный цвет соответствует цвету карты с указанным индексом,
+        /// иначе false
+        /// </summary>
+        /// <param name="choosedColor">Цвет карты</param>
+        /// <param name="cardIndex">Индекс карты в колоде</param>
+        public bool CompareCardColor(CardColor choosedColor, int cardIndex)
+        {
+            if (choosedColor == mCards[cardIndex].Color)
+                return true;
+
+            return false;
+        }
+        /// <summary>
+        /// Добавляет не характерный для карты цвет в соответствующий список карты с 
+        /// указанным индексом
+        /// </summary>
+        /// <param name="choosedColor">Цвет карты</param>
+        /// <param name="cardIndex">Индекс карты в колоде</param>
+        public void AddNoColor(CardColor choosedColor, int cardIndex)
+        {
+            for (int i = 0; i < mCards.Count; i++)
+			{
+                if(i != cardIndex && !mCards[i].NoColors.Contains(choosedColor))
+                    mCards[i].NoColors.Add(choosedColor);
+			}
+        }
+        /// <summary>
+        /// Возвращает true если указанный ранг соответствует рангу карты с указанным индексом,
+        /// иначе false
+        /// </summary>
+        /// <param name="choosedColor">Ранг карты</param>
+        /// <param name="cardIndex">Индекс карты в колоде</param>
+        public bool CompareCardRank(int cardRank, int cardIndex)
+        {
+            if (cardRank == mCards[cardIndex].Rank)
+                return true;
+
+            return false;
+        }
+        /// <summary>
+        /// Добавляет не характерный для карты ранг в соответствующий список карты с 
+        /// указанным индексом
+        /// </summary>
+        /// <param name="choosedColor">Ранг карты</param>
+        /// <param name="cardIndex">Индекс карты в колоде</param>
+        public void AddNoRank(int choosedRank, int cardIndex)
+        {
+            for (int i = 0; i < mCards.Count; i++)
+            {
+                if (i != cardIndex && !mCards[i].NoRanks.Contains(choosedRank))
+                    mCards[i].NoRanks.Add(choosedRank);
             }
         }
     }

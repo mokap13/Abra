@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace hanabiabra
 {
@@ -12,8 +9,6 @@ namespace hanabiabra
         private GameField mGameField;
         private Player mPlayerA;
         private Player mPlayerB;
-        private Deck mMainDeck;
-        private Deck mTableDeck;
 
         public GameEngine()
         {
@@ -23,26 +18,51 @@ namespace hanabiabra
             mPlayerB = new Player();
             mGameField.currentPlayer = mPlayerA;
             mGameField.nextPlayer = mPlayerB;
-            mMainDeck = mGameField.mainDeck;
-            mTableDeck = mGameField.tableDeck;
 
             mGameField.UpdatePlayerStatus();
         }
         /// <summary>
         /// Начинает игру
         /// </summary>
-        public void MoveMake(Command command)
+        public void StartGame(Command command)
         {
-            if (TryExecuteCommand(command, mGameField) == true
-                && mGameField.mainDeck.Count > 0)
+            if (IsValidStart(command.Deck))
             {
-                UpdateGameField(mGameField);
+                mGameField.mainDeck = command.Deck;
+                TakeStartDeck();
+                Output.ShowGameStatus(mGameField);
             }
             else
             {
-                UpdateGameField(mGameField);
+                throw new Exception("Deck is incorrect");
+            }
+        }
+        /// <summary>
+        /// Раздает игрокам по начальной колоде
+        /// </summary>
+        private void TakeStartDeck()
+        {
+            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
+            {
+                mPlayerA.TakeCardFromDeck(mGameField.mainDeck);
+            }
+            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
+            {
+                mPlayerB.TakeCardFromDeck(mGameField.mainDeck);
+            }
+        }
+        /// <summary>
+        /// Начинает игру
+        /// </summary>
+        public void MoveMake(Command command)
+        {
+            if (!TryExecuteCommand(command, mGameField)
+                || mGameField.mainDeck.Count == 0)
+            {
                 mGameField.finished = true;
             }
+            
+            UpdateGameField(mGameField);
             Output.ShowGameStatus(mGameField);
         }
         /// <summary>
@@ -61,16 +81,6 @@ namespace hanabiabra
 
             switch (command.Name)
             {
-                case "deck":
-                    if (IsValidStart(command.Deck))
-                    {
-                        mGameField.mainDeck = command.Deck;
-                        TakeStartDeck();
-                        mGameField.turn --;
-                        ChangePlayer(mGameField);
-                        return true;
-                    }
-                    return false;
                 case "Play":
                     if (IsValidPlayCard(currentPlayer.Deck[command.CardIndex], tableDeck))
                     {
@@ -118,7 +128,10 @@ namespace hanabiabra
             gameField.turn++;
             ChangePlayer(mGameField);
         }
-
+        /// <summary>
+        /// Меняет игроков местами(передает ход следующему)
+        /// </summary>
+        /// <param name="gameField"></param>
         private void ChangePlayer(GameField gameField)
         {
             Player tempPlayer = gameField.currentPlayer;
@@ -126,44 +139,45 @@ namespace hanabiabra
             gameField.nextPlayer = tempPlayer;
             gameField.UpdatePlayerStatus();
         }
-
+        /// <summary>
+        /// Возвращает true если ход рискованный, иначе false
+        /// </summary>
+        /// <param name="choosedCard">Выбранная карта</param>
+        /// <param name="tableDeck">Колода стола</param>
+        /// <returns></returns>
         private bool CheckRisk(Card choosedCard, Deck tableDeck)
         {
             List<CardColor> tableNoColors = new List<CardColor>();
             tableNoColors = tableDeck.GetNoColorsForRank(choosedCard.Rank - 1);
 
-            //if (gameField.finished == true)
-            //    return false;
-
-            if (choosedCard.CardVisible == true)
+            if (choosedCard.CardVisible)
                 return false;
 
-            if (choosedCard.RankVisible == false)
-            {
+            if (!choosedCard.RankVisible)
                 return true;
-            }
 
             foreach (CardColor color in tableNoColors)
             {
-                if (choosedCard.NoColors.Contains(color) == false)
-                {
+                if (!choosedCard.NoColors.Contains(color))
                     return true;
-                }
                 else
-                {
                     continue;
-                }
             }
             return false;
         }
-
+        /// <summary>
+        /// Возвращает true если основная колода удовлетворяет условиям игры
+        /// </summary>
+        /// <param name="mainDeck">Основная колода</param>
         private bool IsValidStart(Deck mainDeck)
         {
             if (mainDeck.Count > 10)
                 return true;
             return false;
         }
-
+        /// <summary>
+        /// Возвращает true если карту можно разыграть, иначе false
+        /// </summary>
         private bool IsValidPlayCard(Card choosedCard, Deck tableDeck)
         {
             if (choosedCard.Rank - 1 == tableDeck.GetMaxRank(choosedCard.Color))
@@ -171,12 +185,16 @@ namespace hanabiabra
 
             return false;
         }
-
+        /// <summary>
+        /// Возвращает true если карту можно сбросить, иначе false
+        /// </summary>
         private bool IsValidDropCard(Card choosedCard, Deck tableDeck)
         {
             return true;
         }
-
+        /// <summary>
+        /// Возвращает true если можно сказать опоненту цвет выбранных карт
+        /// </summary>
         private bool IsValidTellColor(Command command, Deck nextPlayerDeck)
         {
             int[] cardIndexes = command.CardIndexes;
@@ -192,7 +210,9 @@ namespace hanabiabra
             }
             return true;
         }
-
+        /// <summary>
+        /// Возвращает true если можно сказать опоненту ранг выбранных карт
+        /// </summary>
         private bool IsValidTellRank(Command command, Deck nextPlayerDeck)
         {
             int[] cardIndexes = command.CardIndexes;
@@ -208,16 +228,14 @@ namespace hanabiabra
             }
             return true;
         }
-
-        private void TakeStartDeck()
+        /// <summary>
+        /// Возвращает true если игра закончена
+        /// </summary>
+        public bool Finished
         {
-            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
+            get
             {
-                mPlayerA.TakeCardFromDeck(mGameField.mainDeck);
-            }
-            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
-            {
-                mPlayerB.TakeCardFromDeck(mGameField.mainDeck);
+                return mGameField.finished;
             }
         }
     }
