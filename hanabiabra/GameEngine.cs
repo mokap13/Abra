@@ -5,7 +5,7 @@ namespace hanabiabra
 {
     class GameEngine
     {
-        private const int START_SIZE_PLAYER_DECK = 5;
+        private const int START_PLAYER_DECK_SIZE = 5;
         private GameField mGameField;
         private Player mPlayerA;
         private Player mPlayerB;
@@ -22,14 +22,14 @@ namespace hanabiabra
             mGameField.UpdatePlayerStatus();
         }
         /// <summary>
-        /// Начинает игру
+        /// Подготавливает игру перед ходами игроков
         /// </summary>
         public void StartGame(Command command)
         {
-            if (IsValidStart(command.Deck))
+            if (CheckPlayerActionStart(command.Deck))
             {
                 mGameField.mainDeck = command.Deck;
-                TakeStartDeck();
+                GiveStartDeck(START_PLAYER_DECK_SIZE, mPlayerA, mPlayerB);
                 Output.ShowGameStatus(mGameField);
             }
             else
@@ -38,17 +38,18 @@ namespace hanabiabra
             }
         }
         /// <summary>
-        /// Раздает игрокам по начальной колоде
+        /// Раздает игрокам по стартовой колоде
         /// </summary>
-        private void TakeStartDeck()
+        /// <param name="deckSize">Размер стартовой колоды</param>
+        /// <param name="player">Игроки</param>
+        private void GiveStartDeck(int deckSize, params Player[] player)
         {
-            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
+            for (int i = 0; i < player.Length; i++)
             {
-                mPlayerA.TakeCardFromDeck(mGameField.mainDeck);
-            }
-            for (int i = 0; i < START_SIZE_PLAYER_DECK; i++)
-            {
-                mPlayerB.TakeCardFromDeck(mGameField.mainDeck);
+                for (int j = 0; j < deckSize; j++)
+                {
+                    player[i].TakeCardFromDeck(mGameField.mainDeck);
+                } 
             }
         }
         /// <summary>
@@ -69,9 +70,6 @@ namespace hanabiabra
         /// Возвращает true, если действие игрока не нарушает правил игры и 
         /// false если при выполнении правила нарушаются
         /// </summary>
-        /// <param name="gameField"></param>
-        /// <param name="command"></param>
-        /// <returns></returns>
         private bool TryExecuteCommand(Command command, GameField gameField)
         {
             Player currentPlayer = gameField.currentPlayer;
@@ -82,7 +80,7 @@ namespace hanabiabra
             switch (command.Name)
             {
                 case "Play":
-                    if (IsValidPlayCard(currentPlayer.Deck[command.CardIndex], tableDeck))
+                    if (CheckPlayerActionPlayCard(currentPlayer.Deck[command.CardIndex], tableDeck))
                     {
                         if (CheckRisk(currentPlayer.Deck[command.CardIndex], tableDeck)
                             && gameField.finished == false)
@@ -94,7 +92,7 @@ namespace hanabiabra
                     }
                     return false;
                 case "Drop":
-                    if (IsValidDropCard(currentPlayer.Deck[command.CardIndex], tableDeck))
+                    if (CheckPlayerActionDropCard(currentPlayer.Deck[command.CardIndex], tableDeck))
                     {
                         currentPlayer.DropCard(command.CardIndex);
                         currentPlayer.TakeCardFromDeck(gameField.mainDeck);
@@ -102,14 +100,14 @@ namespace hanabiabra
                     }
                     return false;
                 case "color":
-                    if (IsValidTellColor(command, nextPlayer.Deck))
+                    if (CheckPlayerActionTellColor(command, nextPlayer.Deck))
                     {
                         currentPlayer.TellColor(command, nextPlayer.Deck);
                         return true;
                     }
                     return false;
                 case "rank":
-                    if (IsValidTellRank(command, nextPlayer.Deck))
+                    if (CheckPlayerActionTellRank(command, nextPlayer.Deck))
                     {
                         currentPlayer.TellRank(command, nextPlayer.Deck);
                         return true;
@@ -169,7 +167,7 @@ namespace hanabiabra
         /// Возвращает true если основная колода удовлетворяет условиям игры
         /// </summary>
         /// <param name="mainDeck">Основная колода</param>
-        private bool IsValidStart(Deck mainDeck)
+        private bool CheckPlayerActionStart(Deck mainDeck)
         {
             if (mainDeck.Count > 10)
                 return true;
@@ -178,7 +176,7 @@ namespace hanabiabra
         /// <summary>
         /// Возвращает true если карту можно разыграть, иначе false
         /// </summary>
-        private bool IsValidPlayCard(Card choosedCard, Deck tableDeck)
+        private bool CheckPlayerActionPlayCard(Card choosedCard, Deck tableDeck)
         {
             if (choosedCard.Rank - 1 == tableDeck.GetMaxRank(choosedCard.Color))
                 return true;
@@ -188,14 +186,14 @@ namespace hanabiabra
         /// <summary>
         /// Возвращает true если карту можно сбросить, иначе false
         /// </summary>
-        private bool IsValidDropCard(Card choosedCard, Deck tableDeck)
+        private bool CheckPlayerActionDropCard(Card choosedCard, Deck tableDeck)
         {
             return true;
         }
         /// <summary>
         /// Возвращает true если можно сказать опоненту цвет выбранных карт
         /// </summary>
-        private bool IsValidTellColor(Command command, Deck nextPlayerDeck)
+        private bool CheckPlayerActionTellColor(Command command, Deck nextPlayerDeck)
         {
             int[] cardIndexes = command.CardIndexes;
             CardColor cardColor = command.CardColor;
@@ -213,7 +211,7 @@ namespace hanabiabra
         /// <summary>
         /// Возвращает true если можно сказать опоненту ранг выбранных карт
         /// </summary>
-        private bool IsValidTellRank(Command command, Deck nextPlayerDeck)
+        private bool CheckPlayerActionTellRank(Command command, Deck nextPlayerDeck)
         {
             int[] cardIndexes = command.CardIndexes;
             int cardRank = command.CardRank;

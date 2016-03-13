@@ -63,7 +63,7 @@ namespace hanabiabra
         {
             get
             {
-                if (mNoRanks.Count == COUNT_CARD_RANKS - TRUE_CARD_VALUE)
+                if (mNoRanks.Count == COUNT_CARD_RANKS - 1)
                     return true;
 
                 return mRankVisible;
