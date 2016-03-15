@@ -47,11 +47,11 @@ namespace hanabiabra
             int score = gameField.score;
             int risk = gameField.risk;
             bool finished = gameField.finished;
-
+            
             Player currentPlayer = gameField.currentPlayer;
             Player nextPlayer = gameField.nextPlayer;
 
-            if (gameField.finished == true)
+            if (gameField.finished)
             {
                 Console.WriteLine("Turn: {0}, cards: {1}, with risk: {2}", turn, score, risk);
             }

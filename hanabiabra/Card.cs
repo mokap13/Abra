@@ -4,8 +4,8 @@ namespace hanabiabra
 {
     class Card
     {
-        public const int COUNT_CARD_COLORS = 5;
-        public const int COUNT_CARD_RANKS = 5;
+        public const int CARD_COLORS_COUNT = 5;
+        public const int CARD_RANKS_COUNT = 5;
         private int TRUE_CARD_VALUE = 1;
         private CardColor mColor;
         private int mRank;
@@ -49,7 +49,7 @@ namespace hanabiabra
         {
             get
             {
-                if (mNoColors.Count == COUNT_CARD_COLORS - TRUE_CARD_VALUE)
+                if (mNoColors.Count == CARD_COLORS_COUNT - TRUE_CARD_VALUE)
                     mColorVisible = true;
 
                 return mColorVisible;
@@ -63,7 +63,7 @@ namespace hanabiabra
         {
             get
             {
-                if (mNoRanks.Count == COUNT_CARD_RANKS - 1)
+                if (mNoRanks.Count == CARD_RANKS_COUNT - 1)
                     return true;
 
                 return mRankVisible;

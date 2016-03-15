@@ -30,7 +30,7 @@ namespace hanabiabra
             {
                 mGameField.mainDeck = command.Deck;
                 GiveStartDeck(START_PLAYER_DECK_SIZE, mPlayerA, mPlayerB);
-                Output.ShowGameStatus(mGameField);
+                //Output.ShowGameStatus(mGameField);
             }
             else
             {
@@ -64,7 +64,7 @@ namespace hanabiabra
             }
             
             UpdateGameField(mGameField);
-            Output.ShowGameStatus(mGameField);
+            //Output.ShowGameStatus(mGameField);
         }
         /// <summary>
         /// Возвращает true, если действие игрока не нарушает правил игры и 
@@ -75,16 +75,17 @@ namespace hanabiabra
             Player currentPlayer = gameField.currentPlayer;
             Player nextPlayer = gameField.nextPlayer;
             Deck tableDeck = gameField.tableDeck;
-            //Card choosedCard = currentPlayer.Deck[command.CardIndex];
+            Card choosedCard = currentPlayer.Deck[command.CardIndex];
 
             switch (command.Name)
             {
                 case "Play":
                     if (CheckPlayerActionPlayCard(currentPlayer.Deck[command.CardIndex], tableDeck))
                     {
-                        if (CheckRisk(currentPlayer.Deck[command.CardIndex], tableDeck)
-                            && gameField.finished == false)
+                        if (CheckRisk(choosedCard, tableDeck)
+                            && !gameField.finished)
                             gameField.risk++;
+
                         currentPlayer.PlayCard(command.CardIndex, gameField.tableDeck);
                         currentPlayer.TakeCardFromDeck(gameField.mainDeck);
                         mGameField.score++;
@@ -92,7 +93,7 @@ namespace hanabiabra
                     }
                     return false;
                 case "Drop":
-                    if (CheckPlayerActionDropCard(currentPlayer.Deck[command.CardIndex], tableDeck))
+                    if (CheckPlayerActionDropCard(choosedCard, tableDeck))
                     {
                         currentPlayer.DropCard(command.CardIndex);
                         currentPlayer.TakeCardFromDeck(gameField.mainDeck);
@@ -158,8 +159,6 @@ namespace hanabiabra
             {
                 if (!choosedCard.NoColors.Contains(color))
                     return true;
-                else
-                    continue;
             }
             return false;
         }
@@ -234,6 +233,14 @@ namespace hanabiabra
             get
             {
                 return mGameField.finished;
+            }
+        }
+
+        public GameField GetGameField
+        {
+            get
+            {
+                return mGameField;
             }
         }
     }
